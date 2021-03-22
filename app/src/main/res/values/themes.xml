@@ -1,0 +1,19 @@
+<resources>
+
+
+    <style name="Theme.MovieExplorer" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="android:statusBarColor">@color/statusBarBackgroundColor</item>
+        <item name="actionBarStyle">@style/CustomActionBarStyle</item>
+
+    </style>
+
+    <style name="CustomActionBarStyle" parent="Widget.MaterialComponents.ActionBar.Primary">
+        <item name="background">@color/actionBarBackgroundColor</item>
+    </style>
+
+
+</resources>

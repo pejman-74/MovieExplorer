@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MovieExplorer</string>
+    <string name="home">Home</string>
+    <string name="favorite">Favorite</string>
+</resources>

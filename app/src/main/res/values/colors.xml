@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#6200EA</color>
+    <color name="colorPrimaryVariant">#5502C8</color>
+    <color name="colorOnPrimary">#9D46FF</color>
+
+    <color name="light1">#80D1D1D1</color>
+    <color name="light2">#D1D1D1</color>
+    <color name="light3">#F9F9F9</color>
+    <color name="white">#FFFFFF</color>
+
+    <color name="dark1">#425468</color>
+    <color name="dark2">#334253</color>
+    <color name="dark3">#212d3b</color>
+    <color name="black">#000000</color>
+
+
+    <!--LIGHT THEME COLORS-->
+
+    <color name="actionBarBackgroundColor">@color/colorPrimary</color>
+    <color name="statusBarBackgroundColor">@color/colorPrimaryVariant</color>
+    <color name="mainActivityBackgroundColor">@color/light1</color>
+
+    //bottomNavigation
+    <color name="bottomNavBackgroundTintColor">@color/white</color>
+    <color name="bottomNavItemIconTintColor">@color/colorOnPrimary</color>
+    <color name="bottomNavItemIconCheckedTintColor">@color/colorPrimary</color>
+</resources>
