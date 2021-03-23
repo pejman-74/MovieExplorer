@@ -99,4 +99,7 @@ dependencies {
     kapt 'androidx.room:room-compiler:2.2.6'
     implementation 'androidx.room:room-ktx:2.2.6'
 
+    //Image loader
+    implementation 'io.coil-kt:coil:1.1.1'
+
 }

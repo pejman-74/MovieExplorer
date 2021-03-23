@@ -15,5 +15,19 @@
         <item name="background">@color/actionBarBackgroundColor</item>
     </style>
 
+    <style name="MovieItemDescriptionsStyle" parent="TextAppearance.Compat.Notification.Title">
+        <item name="android:textColor">@color/movieItemDescriptionTextColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/acme</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">15sp</item>
+    </style>
 
+    <style name="MovieItemTitlesStyle" parent="TextAppearance.Compat.Notification.Title">
+        <item name="android:textColor">@color/movieItemTitlesTextColor</item>
+        <item name="android:fontFamily">@font/acme</item>
+        <item name="android:textSize">15sp</item>
+    </style>
 </resources>

@@ -26,4 +26,9 @@
     <color name="bottomNavBackgroundTintColor">@color/dark2</color>
     <color name="bottomNavItemIconTintColor">@color/light1</color>
     <color name="bottomNavItemIconCheckedTintColor">@color/light2</color>
+
+    //movieItem
+    <color name="movieItemBackgroundColor">@color/dark2</color>
+    <color name="movieItemDescriptionTextColor">@color/light2</color>
+    <color name="movieItemTitlesTextColor">@color/light1</color>
 </resources>
