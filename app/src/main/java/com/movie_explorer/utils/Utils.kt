@@ -1,5 +1,8 @@
 package com.movie_explorer.utils
 
+import android.content.Context
+import android.widget.Toast
+
 fun List<String>.toGenresStyleText(): String {
     var genres = ""
     forEachIndexed { index, s ->
@@ -8,4 +11,7 @@ fun List<String>.toGenresStyleText(): String {
             genres += ", "
     }
     return genres
+}
+fun Context.showLongToast(message: String) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 }

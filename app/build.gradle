@@ -18,7 +18,11 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.movie_explorer.HiltTestRunner"
+    }
+    packagingOptions {
+        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/AL2.0'
     }
 
     buildTypes {

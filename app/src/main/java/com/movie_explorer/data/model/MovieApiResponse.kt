@@ -7,5 +7,5 @@ data class MovieApiResponse(
     @SerializedName("data")
     val movies: List<Movie>,
     @SerializedName("metadata")
-    val metadata: Metadata
+    val metadata: Metadata? = null
 )

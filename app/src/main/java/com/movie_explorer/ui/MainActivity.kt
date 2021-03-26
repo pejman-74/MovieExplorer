@@ -13,8 +13,9 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    lateinit var vBinding: ActivityMainBinding
-    lateinit var navController: NavController
+
+    private lateinit var vBinding: ActivityMainBinding
+    private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vBinding = ActivityMainBinding.inflate(layoutInflater)

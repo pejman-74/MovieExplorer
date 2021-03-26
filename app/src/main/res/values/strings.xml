@@ -7,4 +7,6 @@
     <string name="year">Year :</string>
     <string name="imdb">IMDB :</string>
     <string name="search">Search</string>
+    <string name="enable_internet">Enable the internet connection</string>
+    <string name="unknown_error">Unknown error occurred</string>
 </resources>

@@ -1,10 +1,17 @@
 package com.movie_explorer.di
 
+import android.content.Context
+import com.movie_explorer.data.database.dao.MovieDao
 import com.movie_explorer.data.network.MovieApis
+import com.movie_explorer.data.repository.Repository
+import com.movie_explorer.data.repository.RepositoryInterface
 import com.movie_explorer.utils.Constants
+import com.movie_explorer.utils.network.ConnectionCheckerInterface
+import com.movie_explorer.utils.network.LiveConnectionObserver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -40,5 +47,16 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideMovieApis(retrofit: Retrofit): MovieApis = retrofit.create(MovieApis::class.java)
+
+
+    @Provides
+    @Singleton
+    fun provideRepository(movieApis: MovieApis, movieDao: MovieDao): RepositoryInterface =
+        Repository(movieApis, movieDao)
+
+    @Provides
+    @Singleton
+    fun provideConnectionChecker(@ApplicationContext context: Context): ConnectionCheckerInterface =
+        LiveConnectionObserver(context)
 
 }
