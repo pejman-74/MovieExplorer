@@ -1,6 +1,8 @@
 package com.movie_explorer.di
 
 import android.content.Context
+import com.movie_explorer.data.database.MovieDataBase
+import com.movie_explorer.data.database.dao.FavoriteMovieDao
 import com.movie_explorer.data.database.dao.MovieDao
 import com.movie_explorer.data.network.MovieApis
 import com.movie_explorer.data.repository.Repository
@@ -51,8 +53,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRepository(movieApis: MovieApis, movieDao: MovieDao): RepositoryInterface =
-        Repository(movieApis, movieDao)
+    fun provideRepository(movieApis: MovieApis, movieDao: MovieDao,favoriteMovieDao: FavoriteMovieDao): RepositoryInterface =
+        Repository(movieApis, movieDao,favoriteMovieDao)
 
     @Provides
     @Singleton

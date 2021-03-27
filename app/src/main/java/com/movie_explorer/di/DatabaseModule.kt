@@ -3,6 +3,7 @@ package com.movie_explorer.di
 import android.content.Context
 import androidx.room.Room
 import com.movie_explorer.data.database.MovieDataBase
+import com.movie_explorer.data.database.dao.FavoriteMovieDao
 import com.movie_explorer.data.database.dao.MovieDao
 import com.movie_explorer.utils.Constants.Companion.DB_NAME
 import dagger.Module
@@ -24,4 +25,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideMovieDao(movieDataBase: MovieDataBase): MovieDao = movieDataBase.movieDao()
+
+    @Provides
+    @Singleton
+    fun provideFavoriteMoviesDao(movieDataBase: MovieDataBase): FavoriteMovieDao = movieDataBase.favoriteMovieDao()
 }

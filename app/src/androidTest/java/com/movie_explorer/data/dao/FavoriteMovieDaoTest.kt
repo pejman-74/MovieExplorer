@@ -5,7 +5,9 @@ import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.movie_explorer.data.database.MovieDataBase
+import com.movie_explorer.data.database.dao.FavoriteMovieDao
 import com.movie_explorer.data.database.dao.MovieDao
+import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.di.TestDBQualifier
 import com.movie_explorer.utils.androidDummySuccessApiResponse
@@ -23,18 +25,22 @@ import javax.inject.Inject
 @HiltAndroidTest
 @ExperimentalCoroutinesApi
 @SmallTest
-class MovieDaoTest {
+class FavoriteMovieDaoTest {
     @get:Rule
-    var hiltRule = HiltAndroidRule(this)
+    val hiltRule = HiltAndroidRule(this)
 
     @get:Rule
-    val instantExecutorRule = InstantTaskExecutorRule()
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Inject
     @TestDBQualifier
     lateinit var movieDataBase: MovieDataBase
 
+
     lateinit var movieDao: MovieDao
+
+
+    lateinit var favoriteMovieDao: FavoriteMovieDao
 
     private val dummyMovieApisResponse: MovieApiResponse =
         Gson().fromJson(androidDummySuccessApiResponse, MovieApiResponse::class.java)
@@ -43,6 +49,7 @@ class MovieDaoTest {
     fun setUp() {
         hiltRule.inject()
         movieDao = movieDataBase.movieDao()
+        favoriteMovieDao = movieDataBase.favoriteMovieDao()
     }
 
     @After
@@ -50,21 +57,19 @@ class MovieDaoTest {
         movieDataBase.close()
     }
 
-    @Test
-    fun insert_dummy_movie() = runBlockingTest {
-        movieDao.insertMovie(dummyMovieApisResponse.movies)
-        assertThat(movieDao.getAllMovies().first()).isEqualTo(dummyMovieApisResponse.movies)
-    }
 
     @Test
-    fun search_movie_by_name() = runBlockingTest {
-        movieDao.insertMovie(dummyMovieApisResponse.movies)
-        assertThat(movieDao.searchMovieByName("The Shawshank Redemption").size).isEqualTo(1)
-    }
+    fun check_relation_between_movie_and_favoriteMovie() = runBlockingTest {
 
-    @Test
-    fun search_movie_by_name_with_empty_parameter_should_return_all_movies() = runBlockingTest {
         movieDao.insertMovie(dummyMovieApisResponse.movies)
-        assertThat(movieDao.searchMovieByName("").size).isEqualTo(dummyMovieApisResponse.movies.size)
+
+        val favoriteMovie = FavoriteMovie(1)
+        favoriteMovieDao.insertFavoriteMovie(favoriteMovie)
+
+        val favoriteMovies =
+            favoriteMovieDao.getAllMovieAndFavoriteMovie().first()
+
+        assertThat(favoriteMovies.first().movie).isEqualTo(dummyMovieApisResponse.movies.first())
+        assertThat(favoriteMovies.first().favoriteMovie).isEqualTo(favoriteMovie)
     }
 }

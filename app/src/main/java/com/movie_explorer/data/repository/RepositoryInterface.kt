@@ -1,5 +1,7 @@
 package com.movie_explorer.data.repository
 
+import com.movie_explorer.data.database.MovieAndFavoriteMovie
+import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.Movie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.wrapper.ResourceResult
@@ -18,4 +20,12 @@ interface RepositoryInterface {
     fun getAllMovies(): Flow<List<Movie>>
 
     suspend fun searchMovieByName(query: String?): List<Movie>
+
+
+
+    suspend fun saveFavoriteMovie(favoriteMovie: FavoriteMovie)
+
+    suspend fun deleteFavoriteMovie(movieId: Int)
+
+    fun favoriteMovies(): Flow<List<MovieAndFavoriteMovie>>
 }

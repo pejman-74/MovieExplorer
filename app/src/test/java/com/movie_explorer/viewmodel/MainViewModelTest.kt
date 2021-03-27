@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.movie_explorer.MainCoroutineRule
+import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.repositroy.FakeRepository
 import com.movie_explorer.getOrAwaitValue
@@ -31,6 +32,8 @@ class MainViewModelTest {
 
     private val dummyMovieApisResponse: MovieApiResponse =
         Gson().fromJson(dummySuccessApiResponse, MovieApiResponse::class.java)
+
+    private val favoriteMovie = FavoriteMovie(1)
 
     @Before
     fun setUp() {
@@ -79,5 +82,42 @@ class MainViewModelTest {
             mainViewModel.movieSearchResponse.getOrAwaitValue() as ResourceResult.Success
 
         assertThat(movieSearchResponseValue.value.movies).isEqualTo(dummyMovieApisResponse.movies)
+    }
+
+    @Test
+    fun `insert favorite movie,should return in allMovieAndFavoriteMovie`() {
+
+        //for filling database
+        mainViewModel.searchMovie()
+
+        mainViewModel.saveFavoriteMovie(favoriteMovie)
+
+        val movieAndFavoriteMovie = mainViewModel.allMovieAndFavoriteMovie.getOrAwaitValue().first()
+
+        assertThat(movieAndFavoriteMovie.movie).isEqualTo(dummyMovieApisResponse.movies.first())
+        assertThat(movieAndFavoriteMovie.favoriteMovie).isEqualTo(favoriteMovie)
+    }
+
+    @Test
+    fun `delete favorite movie,should not be exist inside allMovieAndFavoriteMovie`() {
+
+        //for filling database
+        mainViewModel.searchMovie()
+
+        mainViewModel.saveFavoriteMovie(favoriteMovie)
+
+        val allMovieAndFavoriteMovie = mainViewModel.allMovieAndFavoriteMovie
+
+        val movieAndFavoriteMovie =allMovieAndFavoriteMovie.getOrAwaitValue().first()
+
+        assertThat(movieAndFavoriteMovie.movie).isEqualTo(dummyMovieApisResponse.movies.first())
+        assertThat(movieAndFavoriteMovie.favoriteMovie).isEqualTo(favoriteMovie)
+
+        mainViewModel.deleteFavoriteMovie(favoriteMovie.movieId)
+
+
+        assertThat(allMovieAndFavoriteMovie.getOrAwaitValue()).isEmpty()
+
+
     }
 }

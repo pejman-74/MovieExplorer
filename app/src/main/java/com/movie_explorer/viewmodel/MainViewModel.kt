@@ -1,12 +1,12 @@
 package com.movie_explorer.viewmodel
 
 import androidx.lifecycle.*
+import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.repository.RepositoryInterface
 import com.movie_explorer.utils.network.ConnectionCheckerInterface
 import com.movie_explorer.wrapper.ResourceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,4 +51,13 @@ class MainViewModel @Inject constructor(
     fun hasInternetConnection(): Boolean = connectionChecker.hasInternetConnection()
     val hasInternetConnectionLive: LiveData<Boolean> =
         connectionChecker.hasInternetConnectionLive()
+
+
+    fun saveFavoriteMovie(favoriteMovie: FavoriteMovie) =
+        viewModelScope.launch { repository.saveFavoriteMovie(favoriteMovie) }
+
+    fun deleteFavoriteMovie(movieId: Int) =
+        viewModelScope.launch { repository.deleteFavoriteMovie(movieId) }
+
+    val allMovieAndFavoriteMovie = repository.favoriteMovies().asLiveData()
 }
