@@ -42,13 +42,22 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
         //observing search result (cache and network)
         vModel.movieSearchResponse.observe(viewLifecycleOwner, {
             when (it) {
-                is ResourceResult.Failure ->
+                is ResourceResult.Failure -> {
+                    vBinding.rvMovies.hideShimmer()
                     requireContext().showLongToast(getString(R.string.unknown_error))
+                }
                 ResourceResult.Loading -> {
+                    vBinding.rvMovies.showShimmer()
                 }
                 is ResourceResult.Success -> {
                     val movies = it.value.movies
                     movieAdapter.setMovieList(movies)
+                    //scroll to top
+                    if (movies.isNotEmpty())
+                        vBinding.rvMovies.smoothScrollToPosition(0)
+
+                    vBinding.rvMovies.hideShimmer()
+                    vBinding.imDissatisfied.visibility = View.GONE
                     lastQuery = null
                 }
             }
@@ -60,11 +69,14 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
             if cache is empty and connection not available,mean is:
             user lunched the app for first time without internet connection.
              */
-            isInExceptionMode = if (it.isEmpty() && !vModel.hasInternetConnection()) {
+            if (it.isEmpty() && !vModel.hasInternetConnection()) {
                 requireContext().showLongToast(getString(R.string.enable_internet))
-                true
+                vBinding.rvMovies.hideShimmer()
+                vBinding.imDissatisfied.visibility = View.VISIBLE
+                isInExceptionMode = true
+                return@observe
             } else {
-                false
+                isInExceptionMode = false
             }
             //if cache is empty then searching for get initializing movies
             if (it.isEmpty()) {
@@ -99,12 +111,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
             requireContext().showLongToast(getString(R.string.enable_internet))
             return true
         }
-        query?.let {
-            vModel.searchMovie(it)
-            //scroll to top
-            if (movieAdapter.itemCount > 0)
-                vBinding.rvMovies.scrollToPosition(0)
-        }
+        query?.let { vModel.searchMovie(it) }
         return true
     }
 

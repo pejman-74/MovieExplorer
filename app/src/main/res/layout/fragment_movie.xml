@@ -6,10 +6,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragments.MovieFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/im_dissatisfied"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_dissatisfied"
+        app:tint="@color/imageViewDissatisfiedTintColor" />
+
+    <com.todkars.shimmer.ShimmerRecyclerView
         android:id="@+id/rv_movies"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:shimmer_recycler_auto_start="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:shimmer_recycler_item_count="10"
+        app:shimmer_recycler_layout="@layout/movie_item_palceholder"
         tools:listitem="@layout/movie_item" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

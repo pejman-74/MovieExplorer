@@ -106,4 +106,8 @@ dependencies {
     //Image loader
     implementation 'io.coil-kt:coil:1.1.1'
 
+    //Shimmer recyclerview
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'com.todkars:shimmer-recyclerview:0.4.1'
+
 }

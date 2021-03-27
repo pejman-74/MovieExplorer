@@ -21,6 +21,7 @@
     <color name="actionBarBackgroundColor">@color/colorPrimary</color>
     <color name="statusBarBackgroundColor">@color/colorPrimaryVariant</color>
     <color name="mainActivityBackgroundColor">@color/light1</color>
+    <color name="imageViewDissatisfiedTintColor">@color/light2</color>
 
     //bottomNavigation
     <color name="bottomNavBackgroundTintColor">@color/white</color>
@@ -31,4 +32,5 @@
     <color name="movieItemBackgroundColor">@color/white</color>
     <color name="movieItemDescriptionTextColor">@color/black</color>
     <color name="movieItemTitlesTextColor">@color/dark2</color>
+    <color name="movieItemPlaceholderColor">@color/dark1</color>
 </resources>
