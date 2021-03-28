@@ -35,4 +35,5 @@
     <color name="movieItemDescriptionTextColor">@color/black</color>
     <color name="movieItemTitlesTextColor">@color/dark2</color>
     <color name="movieItemPlaceholderColor">@color/dark1</color>
+    <color name="movieItemSelectedColor">@color/colorOnPrimary</color>
 </resources>

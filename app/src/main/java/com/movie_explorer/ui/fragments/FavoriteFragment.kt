@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.movie_explorer.data.model.Movie
 import com.movie_explorer.databinding.FragmentFavoriteBinding
-import com.movie_explorer.ui.adapters.MovieAdapter
+import com.movie_explorer.ui.adapters.FavoriteMovieAdapter
 import com.movie_explorer.viewmodel.MainViewModel
 
 
@@ -16,7 +16,7 @@ class FavoriteFragment : Fragment() {
 
     lateinit var vBinding: FragmentFavoriteBinding
     private val vModel: MainViewModel by activityViewModels()
-    private val movieAdapter by lazy { MovieAdapter() }
+    private val favoriteMovieAdapter by lazy { FavoriteMovieAdapter(requireActivity(), vModel) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,20 +30,19 @@ class FavoriteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         vBinding.rvBookmark.apply {
-            adapter = movieAdapter
+            adapter = favoriteMovieAdapter
         }
 
         vModel.allMovieAndFavoriteMovie.observe(viewLifecycleOwner, {
-            if (it.isEmpty()) {
+            if (it.isEmpty())
                 vBinding.imBookmark.visibility = View.VISIBLE
-                return@observe
-            }
+
             val movies: List<Movie> =
                 it.sortedBy { movieAndFavoriteMovie -> movieAndFavoriteMovie.favoriteMovie.createTime }
                     .map { movieAndFavoriteMovie ->
                         movieAndFavoriteMovie.movie
                     }
-            movieAdapter.setMovieList(movies)
+            favoriteMovieAdapter.setMovieList(movies)
         })
     }
 }

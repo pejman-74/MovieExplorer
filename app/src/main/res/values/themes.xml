@@ -8,7 +8,16 @@
         <item name="colorOnPrimary">@color/colorOnPrimary</item>
         <item name="android:statusBarColor">@color/statusBarBackgroundColor</item>
         <item name="actionBarStyle">@style/CustomActionBarStyle</item>
+        <item name="actionModeStyle">@style/ActionModeStyle</item>
+    </style>
 
+    <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">@color/actionBarBackgroundColor</item>
+        <item name="titleTextStyle">@style/ActionModeTitleTextStyle</item>
+    </style>
+
+    <style name="ActionModeTitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="CustomActionBarStyle" parent="Widget.MaterialComponents.ActionBar.Primary">

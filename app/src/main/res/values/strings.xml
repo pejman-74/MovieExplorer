@@ -12,4 +12,9 @@
     <string name="description">Description</string>
     <string name="movie_description">Plot: %s \n\n Actors: %s \n\n Writer: %s \n\n Awards: %s \n</string>
     <string name="detail">Detail</string>
+    <string name="delete_favorite_movies">Delete Favorite Movies</string>
+    <string name="delete_favorite_dialog_message">Are you sure?</string>
+    <string name="delete_favorite_dialog_positive_button">Yes</string>
+    <string name="delete_favorite_dialog_negative_button">Cancel</string>
+    <string name="delete_favorite_dialog_title">Deleting</string>
 </resources>

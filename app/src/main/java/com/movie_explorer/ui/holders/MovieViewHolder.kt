@@ -20,10 +20,6 @@ class MovieViewHolder(private val movieItemBinding: MovieItemBinding) :
         movieItemBinding.tvCountry.text = movie.country
         movieItemBinding.tvImdb.text = movie.imdbRating
         movieItemBinding.ivPoster.load(movie.poster)
-        movieItemBinding.root.setOnClickListener {
-            it.findNavController()
-                .navigate(MovieFragmentDirections.toDetailFragment(movie.id))
-        }
     }
 
     companion object {

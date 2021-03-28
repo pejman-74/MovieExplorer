@@ -1,10 +1,12 @@
 package com.movie_explorer.ui.adapters
 
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.movie_explorer.data.model.Movie
+import com.movie_explorer.ui.fragments.MovieFragmentDirections
 import com.movie_explorer.ui.holders.MovieViewHolder
 
 class MovieAdapter : RecyclerView.Adapter<MovieViewHolder>() {
@@ -27,7 +29,12 @@ class MovieAdapter : RecyclerView.Adapter<MovieViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        holder.bind(movies[position])
+        val movie = movies[position]
+        holder.bind(movie)
+        holder.itemView.setOnClickListener {
+            it.findNavController()
+                .navigate(MovieFragmentDirections.toDetailFragment(movie.id))
+        }
     }
 
     override fun getItemCount(): Int = movies.size
