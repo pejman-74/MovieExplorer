@@ -5,6 +5,7 @@ import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.movie_explorer.R
 import com.movie_explorer.databinding.FragmentMovieBinding
 import com.movie_explorer.ui.adapters.MovieAdapter

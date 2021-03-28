@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragments.DetailFragment">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vp_movie_images"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/light2" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="@font/aclonica"
+        android:gravity="center"
+        android:maxLines="2"
+        android:minLines="2"
+        android:textColor="@color/movieItemDescriptionTextColor"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/vp_movie_images"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/vp_movie_images"
+        tools:text="The Shawshank Redemption" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vp_movie_images"
+        app:srcCompat="@drawable/ic_date"
+        app:tint="@color/movieItemTitlesTextColor" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_release"
+        style="@style/MovieItemDescriptionsStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+        app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageView"
+        tools:text="1994" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+        app:layout_constraintEnd_toStartOf="@+id/appCompatImageView2"
+        app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageView"
+        app:srcCompat="@drawable/ic_time"
+        app:tint="@color/movieItemTitlesTextColor" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_time"
+        style="@style/MovieItemDescriptionsStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView1"
+        app:layout_constraintStart_toEndOf="@+id/appCompatImageView1"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageView1"
+        tools:text="142 min" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_imdb"
+        app:layout_constraintTop_toBottomOf="@+id/vp_movie_images"
+        app:layout_goneMarginStart="24dp"
+        app:srcCompat="@drawable/ic_star"
+        app:tint="@color/movieItemTitlesTextColor" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_imdb"
+        style="@style/MovieItemDescriptionsStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageView2"
+        tools:text="9.3" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toStartOf="@+id/appCompatImageView"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView"
+        app:srcCompat="@drawable/ic_director_chair"
+        app:tint="@color/movieItemTitlesTextColor" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_director"
+        style="@style/MovieItemDescriptionsStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView3"
+        app:layout_constraintStart_toEndOf="@+id/appCompatImageView3"
+        app:layout_constraintTop_toTopOf="@+id/appCompatImageView3"
+        tools:text="Frank Darabont" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_country"
+        app:layout_constraintEnd_toStartOf="@+id/tv_country"
+        app:layout_constraintTop_toTopOf="@+id/tv_country"
+        app:srcCompat="@drawable/ic_location"
+        app:tint="@color/movieItemTitlesTextColor" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_country"
+        style="@style/MovieItemDescriptionsStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView2"
+        tools:text="Frank Darabont" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/appCompatImageView5"
+        style="@style/MovieItemDescriptionsStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/description"
+        android:textColor="@color/movieItemDescriptionTextColor"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/appCompatImageView3"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView3" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_write"
+        style="@style/MovieItemDescriptionsStyle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="start"
+        android:textColor="@color/movieItemTitlesTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/appCompatImageView5"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatImageView5"
+        tools:text="Tim Robbins, Morgan Freeman, Bob Gunton, William Sadler" />
+</androidx.constraintlayout.widget.ConstraintLayout>
