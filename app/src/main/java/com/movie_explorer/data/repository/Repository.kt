@@ -23,6 +23,10 @@ class Repository @Inject constructor(
         movieApis.searchMovie(query)
     }
 
+    override suspend fun getMovieDetailApi(movie_id: String) = safeApiCall {
+        movieApis.getMovieDetail(movie_id)
+    }
+
 
     //Database calls
 

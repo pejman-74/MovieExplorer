@@ -47,7 +47,7 @@
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_release"
         style="@style/MovieItemDescriptionsStyle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
@@ -69,7 +69,7 @@
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_time"
         style="@style/MovieItemDescriptionsStyle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView1"
@@ -92,7 +92,7 @@
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_imdb"
         style="@style/MovieItemDescriptionsStyle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
@@ -113,7 +113,7 @@
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_director"
         style="@style/MovieItemDescriptionsStyle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView3"
@@ -135,7 +135,7 @@
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_country"
         style="@style/MovieItemDescriptionsStyle"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
@@ -157,13 +157,16 @@
         app:layout_constraintTop_toBottomOf="@+id/appCompatImageView3" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tv_write"
+        android:id="@+id/tv_description"
         style="@style/MovieItemDescriptionsStyle"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="24dp"
         android:gravity="start"
+        android:lineSpacingExtra="10dp"
+        android:lines="20"
+        android:singleLine="false"
         android:textColor="@color/movieItemTitlesTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

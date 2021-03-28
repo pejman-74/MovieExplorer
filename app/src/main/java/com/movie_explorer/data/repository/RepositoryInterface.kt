@@ -4,6 +4,7 @@ import com.movie_explorer.data.database.MovieAndFavoriteMovie
 import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.Movie
 import com.movie_explorer.data.model.MovieApiResponse
+import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.wrapper.ResourceResult
 import kotlinx.coroutines.flow.Flow
 
@@ -12,7 +13,7 @@ interface RepositoryInterface {
     /*Api calls*/
     suspend fun searchMovieApi(query: String? = null): ResourceResult<MovieApiResponse>
 
-
+    suspend fun getMovieDetailApi(movie_id: String): ResourceResult<MovieDetail>
 
     /*Database calls*/
     suspend fun saveMovie(movies: List<Movie>)

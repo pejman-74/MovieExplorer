@@ -12,7 +12,8 @@
         tools:layout="@layout/fragment_movie" >
         <action
             android:id="@+id/action_movieFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
+            app:destination="@id/detailFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
@@ -22,7 +23,7 @@
     <fragment
         android:id="@+id/detailFragment"
         android:name="com.movie_explorer.ui.fragments.DetailFragment"
-        android:label="fragment_detail"
+        android:label="@string/detail"
         tools:layout="@layout/fragment_detail" >
         <argument android:name="movieId"
             app:argType="integer" />

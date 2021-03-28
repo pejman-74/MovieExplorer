@@ -10,4 +10,6 @@
     <string name="enable_internet">Enable the internet connection</string>
     <string name="unknown_error">Unknown error occurred</string>
     <string name="description">Description</string>
+    <string name="movie_description">Plot: %s \n\n Actors: %s \n\n Writer: %s \n\n Awards: %s \n</string>
+    <string name="detail">Detail</string>
 </resources>

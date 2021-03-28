@@ -3,6 +3,7 @@ package com.movie_explorer.viewmodel
 import androidx.lifecycle.*
 import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.MovieApiResponse
+import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.repository.RepositoryInterface
 import com.movie_explorer.utils.network.ConnectionCheckerInterface
 import com.movie_explorer.wrapper.ResourceResult
@@ -60,4 +61,15 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch { repository.deleteFavoriteMovie(movieId) }
 
     val allMovieAndFavoriteMovie = repository.favoriteMovies().asLiveData()
+
+
+    private val _movieDetailResponse = MutableLiveData<ResourceResult<MovieDetail>>()
+    val movieDetailResponse: MutableLiveData<ResourceResult<MovieDetail>> get() = _movieDetailResponse
+    fun getMovieDetail(movie_id: String) = viewModelScope.launch {
+        _movieDetailResponse.postValue(ResourceResult.Loading)
+
+        val movieDetailApiResponse = repository.getMovieDetailApi(movie_id)
+        _movieDetailResponse.postValue(movieDetailApiResponse)
+    }
+
 }

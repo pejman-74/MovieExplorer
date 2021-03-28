@@ -5,8 +5,10 @@ import com.movie_explorer.data.database.MovieAndFavoriteMovie
 import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.Movie
 import com.movie_explorer.data.model.MovieApiResponse
+import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.repository.RepositoryInterface
 import com.movie_explorer.utils.dummySuccessApiResponse
+import com.movie_explorer.utils.dummySuccessGetMovieDetailApiResponse
 import com.movie_explorer.wrapper.ResourceResult
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -18,11 +20,18 @@ class FakeRepository : RepositoryInterface {
     private val dummyMovieApisResponse: MovieApiResponse =
         Gson().fromJson(dummySuccessApiResponse, MovieApiResponse::class.java)
 
+    private val dummyGetMovieDetailApiResponse: MovieDetail =
+        Gson().fromJson(dummySuccessGetMovieDetailApiResponse, MovieDetail::class.java)
+
     private val fakeMovieDataBase = ArrayList<Movie>()
     private val fakeFavoriteMovieDataBase = ArrayList<FavoriteMovie>()
 
     override suspend fun searchMovieApi(query: String?): ResourceResult<MovieApiResponse> {
         return ResourceResult.Success(dummyMovieApisResponse)
+    }
+
+    override suspend fun getMovieDetailApi(movie_id: String): ResourceResult<MovieDetail> {
+        return ResourceResult.Success(dummyGetMovieDetailApiResponse)
     }
 
 
