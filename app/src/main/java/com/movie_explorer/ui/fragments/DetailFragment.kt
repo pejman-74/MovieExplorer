@@ -11,6 +11,7 @@ import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.databinding.FragmentDetailBinding
 import com.movie_explorer.ui.MainActivity
 import com.movie_explorer.ui.adapters.MovieImageAdapter
+import com.movie_explorer.utils.getCurrentUTCDateTime
 import com.movie_explorer.utils.observeOnce
 import com.movie_explorer.utils.showLongToast
 import com.movie_explorer.viewmodel.MainViewModel
@@ -108,7 +109,9 @@ class DetailFragment : Fragment() {
                     vModel.deleteFavoriteMovie(navArgs.movieId)
                     setSelectIsMode(false)
                 } else {
-                    vModel.saveFavoriteMovie(FavoriteMovie(navArgs.movieId))
+                    vModel.saveFavoriteMovie(
+                        FavoriteMovie(navArgs.movieId, getCurrentUTCDateTime())
+                    )
                     setSelectIsMode(true)
                 }
             }

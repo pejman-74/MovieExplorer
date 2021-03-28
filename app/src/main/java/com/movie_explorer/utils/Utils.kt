@@ -5,6 +5,8 @@ import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun List<String>.toGenresStyleText(): String {
     var genres = ""
@@ -27,3 +29,5 @@ fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observ
         }
     })
 }
+fun getCurrentUTCDateTime() = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US)
+    .apply { timeZone = TimeZone.getTimeZone("UTC") }.format(Date()) + "Z"
