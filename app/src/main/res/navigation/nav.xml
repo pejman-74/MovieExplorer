@@ -9,12 +9,7 @@
         android:id="@+id/movieFragment"
         android:name="com.movie_explorer.ui.fragments.MovieFragment"
         android:label="@string/home"
-        tools:layout="@layout/fragment_movie" >
-        <action
-            android:id="@+id/action_movieFragment_to_detailFragment"
-            app:destination="@id/detailFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
+        tools:layout="@layout/fragment_movie" />
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.movie_explorer.ui.fragments.FavoriteFragment"
@@ -28,5 +23,9 @@
         <argument android:name="movieId"
             app:argType="integer" />
     </fragment>
+    <action
+        android:id="@+id/toDetailFragment"
+        app:destination="@id/detailFragment"
+        app:popUpToInclusive="true" />
 
 </navigation>

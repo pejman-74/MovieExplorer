@@ -22,7 +22,7 @@ class MovieViewHolder(private val movieItemBinding: MovieItemBinding) :
         movieItemBinding.ivPoster.load(movie.poster)
         movieItemBinding.root.setOnClickListener {
             it.findNavController()
-                .navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(movie.id))
+                .navigate(MovieFragmentDirections.toDetailFragment(movie.id))
         }
     }
 
