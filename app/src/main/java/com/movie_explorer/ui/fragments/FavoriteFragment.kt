@@ -38,9 +38,11 @@ class FavoriteFragment : Fragment() {
                 vBinding.imBookmark.visibility = View.VISIBLE
                 return@observe
             }
-            val movies: List<Movie> = it.map { movieAndFavoriteMovie ->
-                movieAndFavoriteMovie.movie
-            }
+            val movies: List<Movie> =
+                it.sortedBy { movieAndFavoriteMovie -> movieAndFavoriteMovie.favoriteMovie.createTime }
+                    .map { movieAndFavoriteMovie ->
+                        movieAndFavoriteMovie.movie
+                    }
             movieAdapter.setMovieList(movies)
         })
     }

@@ -11,6 +11,7 @@ import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.databinding.FragmentDetailBinding
 import com.movie_explorer.ui.MainActivity
 import com.movie_explorer.ui.adapters.MovieImageAdapter
+import com.movie_explorer.utils.getCurrentUTCDateTime
 import com.movie_explorer.utils.observeOnce
 import com.movie_explorer.utils.showLongToast
 import com.movie_explorer.viewmodel.MainViewModel
@@ -72,7 +73,7 @@ class DetailFragment : Fragment() {
 
     }
 
-    private fun setSelectIsMode(isSelected: Boolean? = null) {
+    private fun setIsFavoredMode(isSelected: Boolean? = null) {
         val color = if (isSelected == true) {
             setIsFavored(true)
             ContextCompat.getColor(requireContext(), R.color.favoriteIconTintSelectedColor)
@@ -91,11 +92,11 @@ class DetailFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.favorite_menu, menu)
         menuItem = menu.findItem(R.id.favoriteMenuItem)
-        setSelectIsMode()
+        setIsFavoredMode()
         vModel.allMovieAndFavoriteMovie.observeOnce(viewLifecycleOwner, {
             it.forEach { movieAndFavoriteMovie ->
                 if (movieAndFavoriteMovie.favoriteMovie.movieId == navArgs.movieId) {
-                    setSelectIsMode(true)
+                    setIsFavoredMode(true)
                 }
             }
         })
@@ -106,10 +107,12 @@ class DetailFragment : Fragment() {
             R.id.favoriteMenuItem -> {
                 if (isFavored) {
                     vModel.deleteFavoriteMovie(navArgs.movieId)
-                    setSelectIsMode(false)
+                    setIsFavoredMode(false)
                 } else {
-                    vModel.saveFavoriteMovie(FavoriteMovie(navArgs.movieId))
-                    setSelectIsMode(true)
+                    vModel.saveFavoriteMovie(
+                        FavoriteMovie(navArgs.movieId, getCurrentUTCDateTime())
+                    )
+                    setIsFavoredMode(true)
                 }
             }
         }

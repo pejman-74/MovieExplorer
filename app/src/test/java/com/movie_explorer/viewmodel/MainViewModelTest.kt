@@ -38,7 +38,7 @@ class MainViewModelTest {
     private val dummyGetMovieDetailApiResponse: MovieDetail =
         Gson().fromJson(dummySuccessGetMovieDetailApiResponse, MovieDetail::class.java)
 
-    private val favoriteMovie = FavoriteMovie(1)
+    private val favoriteMovie = FavoriteMovie(1,"")
 
     @Before
     fun setUp() {
