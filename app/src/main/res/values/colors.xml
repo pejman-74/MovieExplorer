@@ -22,6 +22,8 @@
     <color name="statusBarBackgroundColor">@color/colorPrimaryVariant</color>
     <color name="mainActivityBackgroundColor">@color/light1</color>
     <color name="imageViewDissatisfiedTintColor">@color/light2</color>
+    <color name="favoriteIconTintColor">@color/white</color>
+    <color name="favoriteIconTintSelectedColor">#FFEA00</color>
 
     //bottomNavigation
     <color name="bottomNavBackgroundTintColor">@color/white</color>

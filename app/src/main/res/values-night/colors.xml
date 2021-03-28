@@ -22,6 +22,7 @@
     <color name="statusBarBackgroundColor">@color/dark3</color>
     <color name="mainActivityBackgroundColor">@color/dark3</color>
     <color name="imageViewDissatisfiedTintColor">@color/dark2</color>
+    <color name="favoriteIconTintColor">@color/dark1</color>
 
     //bottomNavigation
     <color name="bottomNavBackgroundTintColor">@color/dark2</color>

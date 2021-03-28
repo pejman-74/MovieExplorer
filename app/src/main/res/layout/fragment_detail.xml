@@ -16,23 +16,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:background="@color/light2" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tv_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:fontFamily="@font/aclonica"
-        android:gravity="center"
-        android:maxLines="2"
-        android:minLines="2"
-        android:textColor="@color/movieItemDescriptionTextColor"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/vp_movie_images"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/vp_movie_images"
-        tools:text="The Shawshank Redemption" />
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/appCompatImageView"
         android:layout_width="wrap_content"

@@ -1,15 +1,17 @@
 package com.movie_explorer.ui.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import com.movie_explorer.R
+import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.databinding.FragmentDetailBinding
+import com.movie_explorer.ui.MainActivity
 import com.movie_explorer.ui.adapters.MovieImageAdapter
+import com.movie_explorer.utils.observeOnce
 import com.movie_explorer.utils.showLongToast
 import com.movie_explorer.viewmodel.MainViewModel
 import com.movie_explorer.wrapper.ResourceResult
@@ -21,6 +23,8 @@ class DetailFragment : Fragment() {
     private val vModel: MainViewModel by activityViewModels()
     private val movieImagesAdapter by lazy { MovieImageAdapter() }
     private val navArgs: DetailFragmentArgs by navArgs()
+    private lateinit var menuItem: MenuItem
+    private var isFavored = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,6 +35,7 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
 
         vBinding.vpMovieImages.apply {
             adapter = movieImagesAdapter
@@ -43,6 +48,7 @@ class DetailFragment : Fragment() {
                 is ResourceResult.Loading -> Unit
                 is ResourceResult.Success -> {
                     val movieDetail = result.value
+                    (requireActivity() as MainActivity).supportActionBar?.title = movieDetail.title
                     movieDetail.images?.let { it -> movieImagesAdapter.setUrls(it) }
                     vBinding.tvRelease.text = movieDetail.released.trim()
                     vBinding.tvTime.text = movieDetail.runtime.trim()
@@ -63,7 +69,50 @@ class DetailFragment : Fragment() {
         })
 
         vModel.getMovieDetail(navArgs.movieId.toString())
+
     }
 
+    private fun setSelectIsMode(isSelected: Boolean? = null) {
+        val color = if (isSelected == true) {
+            setIsFavored(true)
+            ContextCompat.getColor(requireContext(), R.color.favoriteIconTintSelectedColor)
+        } else {
+            setIsFavored(false)
+            ContextCompat.getColor(requireContext(), R.color.favoriteIconTintColor)
+        }
+        menuItem.icon.setTint(color)
 
+    }
+
+    private fun setIsFavored(isFav: Boolean) {
+        isFavored = isFav
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.favorite_menu, menu)
+        menuItem = menu.findItem(R.id.favoriteMenuItem)
+        setSelectIsMode()
+        vModel.allMovieAndFavoriteMovie.observeOnce(viewLifecycleOwner, {
+            it.forEach { movieAndFavoriteMovie ->
+                if (movieAndFavoriteMovie.favoriteMovie.movieId == navArgs.movieId) {
+                    setSelectIsMode(true)
+                }
+            }
+        })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.favoriteMenuItem -> {
+                if (isFavored) {
+                    vModel.deleteFavoriteMovie(navArgs.movieId)
+                    setSelectIsMode(false)
+                } else {
+                    vModel.saveFavoriteMovie(FavoriteMovie(navArgs.movieId))
+                    setSelectIsMode(true)
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }
