@@ -9,6 +9,7 @@ import androidx.navigation.fragment.navArgs
 import com.movie_explorer.R
 import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.databinding.FragmentDetailBinding
+import com.movie_explorer.databinding.FragmentDetailPlaceHolderBinding
 import com.movie_explorer.ui.MainActivity
 import com.movie_explorer.ui.adapters.MovieImageAdapter
 import com.movie_explorer.utils.getCurrentUTCDateTime
@@ -26,12 +27,14 @@ class DetailFragment : Fragment() {
     private val navArgs: DetailFragmentArgs by navArgs()
     private lateinit var menuItem: MenuItem
     private var isFavored = false
+    private lateinit var shimmerViewBinding: FragmentDetailPlaceHolderBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         vBinding = FragmentDetailBinding.inflate(inflater, container, false)
-        return vBinding.root
+        shimmerViewBinding = FragmentDetailPlaceHolderBinding.inflate(inflater, container, false)
+        return shimmerViewBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,6 +43,7 @@ class DetailFragment : Fragment() {
 
         vBinding.vpMovieImages.apply {
             adapter = movieImagesAdapter
+            vBinding.dotsIndicator.setViewPager2(this)
         }
         vModel.movieDetailResponse.observe(viewLifecycleOwner, { result ->
             when (result) {
@@ -64,6 +68,7 @@ class DetailFragment : Fragment() {
                             movieDetail.writer.trim(),
                             movieDetail.awards.trim()
                         )
+                    disableShimmerEffect()
                 }
             }
 
@@ -71,6 +76,11 @@ class DetailFragment : Fragment() {
 
         vModel.getMovieDetail(navArgs.movieId.toString())
 
+    }
+
+    private fun disableShimmerEffect() {
+        shimmerViewBinding.root.removeAllViews()
+        shimmerViewBinding.root.addView(vBinding.root)
     }
 
     private fun setIsFavoredMode(isSelected: Boolean? = null) {

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:shimmer_clip_to_children="true"
+        app:shimmer_auto_start="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:id="@+id/vp_movie_images"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@color/movieItemPlaceholderColor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/appCompatImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vp_movie_images"
+                app:srcCompat="@drawable/ic_date"
+                app:tint="@color/movieItemTitlesTextColor" />
+
+            <View
+                android:id="@+id/tv_release"
+                android:layout_width="50dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:background="@color/movieItemPlaceholderColor"
+                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+                app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
+                app:layout_constraintTop_toTopOf="@+id/appCompatImageView" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/appCompatImageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+                app:layout_constraintEnd_toStartOf="@+id/appCompatImageView2"
+                app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
+                app:layout_constraintTop_toTopOf="@+id/appCompatImageView"
+                app:srcCompat="@drawable/ic_time"
+                app:tint="@color/movieItemTitlesTextColor" />
+
+            <View
+                android:id="@+id/tv_time"
+                android:layout_width="40dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:background="@color/movieItemPlaceholderColor"
+                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView1"
+                app:layout_constraintStart_toEndOf="@+id/appCompatImageView1"
+                app:layout_constraintTop_toTopOf="@+id/appCompatImageView1" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/appCompatImageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/tv_imdb"
+                app:layout_constraintTop_toBottomOf="@+id/vp_movie_images"
+                app:layout_goneMarginStart="24dp"
+                app:srcCompat="@drawable/ic_star"
+                app:tint="@color/movieItemTitlesTextColor" />
+
+            <View
+                android:id="@+id/tv_imdb"
+                android:layout_width="30dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/movieItemPlaceholderColor"
+                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/appCompatImageView2" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/appCompatImageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:layout_constraintStart_toStartOf="@+id/appCompatImageView"
+                app:layout_constraintTop_toBottomOf="@+id/appCompatImageView"
+                app:srcCompat="@drawable/ic_director_chair"
+                app:tint="@color/movieItemTitlesTextColor" />
+
+            <View
+                android:id="@+id/tv_director"
+                android:layout_width="70dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="8dp"
+                android:background="@color/movieItemPlaceholderColor"
+                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView3"
+                app:layout_constraintStart_toEndOf="@+id/appCompatImageView3"
+                app:layout_constraintTop_toTopOf="@+id/appCompatImageView3" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/appCompatImageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_country"
+                app:layout_constraintEnd_toStartOf="@+id/tv_country"
+                app:layout_constraintTop_toTopOf="@+id/tv_country"
+                app:srcCompat="@drawable/ic_location"
+                app:tint="@color/movieItemTitlesTextColor" />
+
+            <View
+                android:id="@+id/tv_country"
+                android:layout_width="50dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/movieItemPlaceholderColor"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/appCompatImageView2" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/appCompatImageView5"
+                style="@style/MovieItemDescriptionsStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/description"
+                android:textColor="@color/movieItemDescriptionTextColor"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/appCompatImageView3"
+                app:layout_constraintTop_toBottomOf="@+id/appCompatImageView3" />
+
+            <View
+                android:id="@+id/tv_description"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/movieItemPlaceholderColor"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/appCompatImageView5"
+                app:layout_constraintTop_toBottomOf="@+id/appCompatImageView5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
