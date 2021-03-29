@@ -4,13 +4,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.movie_explorer.R
 import com.movie_explorer.databinding.MovieImagesItemBinding
 
 class MovieImageViewHolder(private val movieImagesItemBinding: MovieImagesItemBinding) :
     RecyclerView.ViewHolder(movieImagesItemBinding.root) {
 
     fun bind(imageUrl: String) {
-        movieImagesItemBinding.ivMovieImage.load(imageUrl)
+        movieImagesItemBinding.ivMovieImage.load(imageUrl) {
+            crossfade(800)
+            error(R.drawable.ic_broken_image)
+        }
     }
 
     companion object {

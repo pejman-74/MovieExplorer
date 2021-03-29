@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var vBinding: ActivityMainBinding
     private lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_MovieExplorer)
         super.onCreate(savedInstanceState)
         vBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(vBinding.root)

@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.movie_explorer.R
 import com.movie_explorer.data.model.Movie
 import com.movie_explorer.databinding.MovieItemBinding
 import com.movie_explorer.ui.fragments.MovieFragmentDirections
@@ -19,7 +20,10 @@ class MovieViewHolder(private val movieItemBinding: MovieItemBinding) :
         movieItemBinding.tvYear.text = movie.year
         movieItemBinding.tvCountry.text = movie.country
         movieItemBinding.tvImdb.text = movie.imdbRating
-        movieItemBinding.ivPoster.load(movie.poster)
+        movieItemBinding.ivPoster.load(movie.poster){
+                crossfade(400)
+                error(R.drawable.ic_broken_image)
+        }
     }
 
     companion object {

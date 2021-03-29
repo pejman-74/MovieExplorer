@@ -11,6 +11,12 @@
         <item name="actionModeStyle">@style/ActionModeStyle</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_drawable</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
     <style name="ActionModeStyle" parent="@style/Widget.AppCompat.ActionMode">
         <item name="background">@color/actionBarBackgroundColor</item>
         <item name="titleTextStyle">@style/ActionModeTitleTextStyle</item>
