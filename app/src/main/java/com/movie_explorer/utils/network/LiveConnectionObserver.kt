@@ -19,11 +19,11 @@ import javax.net.SocketFactory
 class LiveConnectionObserver(context: Context) : LiveData<Boolean>(), ConnectionCheckerInterface {
 
 
-    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
+    private var networkCallback: ConnectivityManager.NetworkCallback
     private val cManager = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
     private val validNetworks: MutableSet<Network> = HashSet()
 
-    override fun onActive() {
+    init {
         networkCallback = createNetworkCallback()
         val networkRequest = NetworkRequest.Builder()
             .addCapability(NET_CAPABILITY_INTERNET)
@@ -36,7 +36,7 @@ class LiveConnectionObserver(context: Context) : LiveData<Boolean>(), Connection
             postValue(false)
     }
 
-    override fun onInactive() {
+    fun stopObserving() {
         cManager.unregisterNetworkCallback(networkCallback)
     }
 

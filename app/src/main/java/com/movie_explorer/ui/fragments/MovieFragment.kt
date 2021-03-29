@@ -5,7 +5,6 @@ import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import com.movie_explorer.R
 import com.movie_explorer.databinding.FragmentMovieBinding
 import com.movie_explorer.ui.adapters.MovieAdapter
@@ -53,8 +52,9 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
                 is ResourceResult.Success -> {
                     val movies = it.value.movies
                     movieAdapter.setMovieList(movies)
-                    //scroll to top
-                    if (movies.isNotEmpty())
+                    /* scroll to top when received mavis not empty and
+                      last query is null(mean of that, this is a user search not initial search)*/
+                    if (movies.isNotEmpty() && !lastQuery.isNullOrEmpty())
                         vBinding.rvMovies.smoothScrollToPosition(0)
 
                     vBinding.rvMovies.hideShimmer()
