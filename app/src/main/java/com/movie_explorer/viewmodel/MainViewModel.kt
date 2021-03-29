@@ -27,7 +27,7 @@ class MainViewModel @Inject constructor(
             val movieApiResponse = repository.searchMovieApi(query)
             _movieSearchResponse.postValue(movieApiResponse)
 
-            cacheResourceResult(movieApiResponse)
+            cacheMovieApiResponseResourceResult(movieApiResponse)
         } else {
 
             val movies = repository.searchMovieByName(query)
@@ -38,7 +38,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun cacheResourceResult(movieApiResponse: ResourceResult<MovieApiResponse>) =
+    private fun cacheMovieApiResponseResourceResult(movieApiResponse: ResourceResult<MovieApiResponse>) =
         viewModelScope.launch {
             when (movieApiResponse) {
                 is ResourceResult.Success -> repository.saveMovie(movieApiResponse.value.movies)
@@ -63,13 +63,30 @@ class MainViewModel @Inject constructor(
     val allMovieAndFavoriteMovie = repository.favoriteMovies().asLiveData()
 
 
-    private val _movieDetailResponse = MutableLiveData<ResourceResult<MovieDetail>>()
-    val movieDetailResponse: MutableLiveData<ResourceResult<MovieDetail>> get() = _movieDetailResponse
-    fun getMovieDetail(movie_id: String) = viewModelScope.launch {
+    private val _movieDetailResponse = MutableLiveData<ResourceResult<MovieDetail?>>()
+    val movieDetailResponse: MutableLiveData<ResourceResult<MovieDetail?>> get() = _movieDetailResponse
+    fun getMovieDetail(movie_id: Int) = viewModelScope.launch {
         _movieDetailResponse.postValue(ResourceResult.Loading)
 
-        val movieDetailApiResponse = repository.getMovieDetailApi(movie_id)
-        _movieDetailResponse.postValue(movieDetailApiResponse)
+        if (connectionChecker.hasInternetConnection()) {
+            val movieDetailApiResponse = repository.getMovieDetailApi(movie_id.toString())
+            _movieDetailResponse.postValue(movieDetailApiResponse)
+            cacheMovieDetailResourceResult(movieDetailApiResponse)
+
+        } else {
+            val movieDetail = repository.getMovieDetail(movie_id)
+            //convert to MovieApiResponse
+            val movieDetailApiResponse = ResourceResult.Success(movieDetail)
+            _movieDetailResponse.postValue(movieDetailApiResponse)
+        }
     }
 
+
+    private fun cacheMovieDetailResourceResult(movieDetailApiResponse: ResourceResult<MovieDetail>) =
+        viewModelScope.launch {
+            when (movieDetailApiResponse) {
+                is ResourceResult.Success -> repository.saveMovieDetail(movieDetailApiResponse.value)
+                else -> Unit
+            }
+        }
 }

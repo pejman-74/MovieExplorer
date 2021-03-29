@@ -183,3 +183,32 @@ const val androidDummySuccessApiResponse = "{\n" +
         "  }\n" +
         "}"
 
+const val androidDummySuccessGetMovieDetailApiResponse = "{\n" +
+        "  \"id\": 1,\n" +
+        "  \"title\": \"The Shawshank Redemption\",\n" +
+        "  \"poster\": \"http://moviesapi.ir/images/tt0111161_poster.jpg\",\n" +
+        "  \"year\": \"1994\",\n" +
+        "  \"rated\": \"R\",\n" +
+        "  \"released\": \"14 Oct 1994\",\n" +
+        "  \"runtime\": \"142 min\",\n" +
+        "  \"director\": \"Frank Darabont\",\n" +
+        "  \"writer\": \"Stephen King (short story \\\"Rita Hayworth and Shawshank Redemption\\\"), Frank Darabont (screenplay)\",\n" +
+        "  \"actors\": \"Tim Robbins, Morgan Freeman, Bob Gunton, William Sadler\",\n" +
+        "  \"plot\": \"Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.\",\n" +
+        "  \"country\": \"USA\",\n" +
+        "  \"awards\": \"Nominated for 7 Oscars. Another 19 wins & 30 nominations.\",\n" +
+        "  \"metascore\": \"80\",\n" +
+        "  \"imdb_rating\": \"9.3\",\n" +
+        "  \"imdb_votes\": \"1,738,596\",\n" +
+        "  \"imdb_id\": \"tt0111161\",\n" +
+        "  \"type\": \"movie\",\n" +
+        "  \"genres\": [\n" +
+        "    \"Crime\",\n" +
+        "    \"Drama\"\n" +
+        "  ],\n" +
+        "  \"images\": [\n" +
+        "    \"http://moviesapi.ir/images/tt0111161_screenshot1.jpg\",\n" +
+        "    \"http://moviesapi.ir/images/tt0111161_screenshot2.jpg\",\n" +
+        "    \"http://moviesapi.ir/images/tt0111161_screenshot3.jpg\"\n" +
+        "  ]\n" +
+        "}"

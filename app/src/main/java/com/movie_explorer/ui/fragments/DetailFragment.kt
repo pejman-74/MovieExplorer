@@ -28,6 +28,7 @@ class DetailFragment : Fragment() {
     private lateinit var menuItem: MenuItem
     private var isFavored = false
     private lateinit var shimmerViewBinding: FragmentDetailPlaceHolderBinding
+    private var hasFailingLoad = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,31 +53,45 @@ class DetailFragment : Fragment() {
                 }
                 is ResourceResult.Loading -> Unit
                 is ResourceResult.Success -> {
-                    val movieDetail = result.value
-                    (requireActivity() as MainActivity).supportActionBar?.title = movieDetail.title
-                    movieDetail.images?.let { it -> movieImagesAdapter.setUrls(it) }
-                    vBinding.tvRelease.text = movieDetail.released.trim()
-                    vBinding.tvTime.text = movieDetail.runtime.trim()
-                    vBinding.tvImdb.text = movieDetail.imdbRating.trim()
-                    vBinding.tvDirector.text = movieDetail.director.trim()
-                    vBinding.tvCountry.text = movieDetail.country.trim()
-                    vBinding.tvDescription.text =
-                        getString(
-                            R.string.movie_description,
-                            movieDetail.plot.trim(),
-                            movieDetail.actors.trim(),
-                            movieDetail.writer.trim(),
-                            movieDetail.awards.trim()
-                        )
-                    disableShimmerEffect()
+                    //if result is null, mean is not founded in db and connection is off
+                    if (result.value == null) {
+                        hasFailingLoad = true
+                        requireContext().showLongToast(getString(R.string.cant_load_from_cache))
+                    } else {
+                        hasFailingLoad = false
+                        val movieDetail = result.value
+                        (requireActivity() as MainActivity).supportActionBar?.title =
+                            movieDetail.title
+                        movieDetail.images?.let { it -> movieImagesAdapter.setUrls(it) }
+                        vBinding.tvRelease.text = movieDetail.released.trim()
+                        vBinding.tvTime.text = movieDetail.runtime.trim()
+                        vBinding.tvImdb.text = movieDetail.imdbRating.trim()
+                        vBinding.tvDirector.text = movieDetail.director.trim()
+                        vBinding.tvCountry.text = movieDetail.country.trim()
+                        vBinding.tvDescription.text =
+                            getString(
+                                R.string.movie_description,
+                                movieDetail.plot.trim(),
+                                movieDetail.actors.trim(),
+                                movieDetail.writer.trim(),
+                                movieDetail.awards.trim()
+                            )
+                        disableShimmerEffect()
+                    }
                 }
             }
 
         })
 
-        vModel.getMovieDetail(navArgs.movieId.toString())
+        loadMovieDetail()
 
+        vModel.hasInternetConnectionLive.observe(viewLifecycleOwner, {
+            if (hasFailingLoad)
+               loadMovieDetail()
+        })
     }
+
+    private fun loadMovieDetail() = vModel.getMovieDetail(navArgs.movieId)
 
     private fun disableShimmerEffect() {
         shimmerViewBinding.root.removeAllViews()

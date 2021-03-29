@@ -16,6 +16,8 @@ interface RepositoryInterface {
     suspend fun getMovieDetailApi(movie_id: String): ResourceResult<MovieDetail>
 
     /*Database calls*/
+
+    //movie
     suspend fun saveMovie(movies: List<Movie>)
 
     fun getAllMovies(): Flow<List<Movie>>
@@ -23,10 +25,16 @@ interface RepositoryInterface {
     suspend fun searchMovieByName(query: String?): List<Movie>
 
 
-
+    //favoriteMovie
     suspend fun saveFavoriteMovie(favoriteMovie: FavoriteMovie)
 
     suspend fun deleteFavoriteMovie(movieId: Int)
 
     fun favoriteMovies(): Flow<List<MovieAndFavoriteMovie>>
+
+
+    //MovieDetail
+    suspend fun saveMovieDetail(movieDetail: MovieDetail)
+
+    suspend fun getMovieDetail(movieDetailId: Int): MovieDetail?
 }

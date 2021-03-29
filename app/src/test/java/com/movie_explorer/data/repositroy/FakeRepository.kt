@@ -25,6 +25,7 @@ class FakeRepository : RepositoryInterface {
 
     private val fakeMovieDataBase = ArrayList<Movie>()
     private val fakeFavoriteMovieDataBase = ArrayList<FavoriteMovie>()
+    private val fakeMovieDetailApiDataBase = ArrayList<MovieDetail>()
 
     override suspend fun searchMovieApi(query: String?): ResourceResult<MovieApiResponse> {
         return ResourceResult.Success(dummyMovieApisResponse)
@@ -73,5 +74,13 @@ class FakeRepository : RepositoryInterface {
             }
 
         }
+
+    override suspend fun saveMovieDetail(movieDetail: MovieDetail) {
+        fakeMovieDetailApiDataBase.add(movieDetail)
+    }
+
+    override suspend fun getMovieDetail(movieDetailId: Int): MovieDetail? {
+        return fakeMovieDetailApiDataBase.find { it.id == movieDetailId }
+    }
 
 }

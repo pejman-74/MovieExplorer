@@ -127,10 +127,33 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `get movie detail`() {
-        mainViewModel.getMovieDetail("1")
+    fun `get movie detail with available network, should return from api`() {
+        mainViewModel.getMovieDetail(1)
         val movieDetailResponse =
             mainViewModel.movieDetailResponse.getOrAwaitValue() as ResourceResult.Success
         assertThat(movieDetailResponse.value).isEqualTo(dummyGetMovieDetailApiResponse)
     }
-}
+
+    @Test
+    fun `get movie detail with NOT available network, should return from db`() {
+        //call for cache into db
+        mainViewModel.getMovieDetail(1)
+        //turn off the connection
+        fakeConnectionChecker.setIsNetworkAvailable(false)
+
+        mainViewModel.getMovieDetail(1)
+        val movieDetailResponse =
+            mainViewModel.movieDetailResponse.getOrAwaitValue() as ResourceResult.Success
+        assertThat(movieDetailResponse.value).isEqualTo(dummyGetMovieDetailApiResponse)
+    }
+
+    @Test
+    fun `get movie detail with NOT available network and NOT available in db, should return Null`() {
+        //turn off the connection
+        fakeConnectionChecker.setIsNetworkAvailable(false)
+
+        mainViewModel.getMovieDetail(1)
+        val movieDetailResponse =
+            mainViewModel.movieDetailResponse.getOrAwaitValue() as ResourceResult.Success
+        assertThat(movieDetailResponse.value).isNull()
+    }}

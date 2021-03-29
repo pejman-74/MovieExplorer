@@ -1,8 +1,10 @@
 package com.movie_explorer.data.model
 
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-
+@Entity
 data class MovieDetail(
     @SerializedName("actors")
     val actors: String,
@@ -15,6 +17,7 @@ data class MovieDetail(
     @SerializedName("genres")
     val genres: List<String>,
     @SerializedName("id")
+    @PrimaryKey(autoGenerate = false)
     val id: Int,
     @SerializedName("images")
     val images: List<String>?,

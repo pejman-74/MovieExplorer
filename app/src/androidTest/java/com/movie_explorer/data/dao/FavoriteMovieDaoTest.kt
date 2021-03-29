@@ -63,7 +63,7 @@ class FavoriteMovieDaoTest {
 
         movieDao.insertMovie(dummyMovieApisResponse.movies)
 
-        val favoriteMovie = FavoriteMovie(1)
+        val favoriteMovie = FavoriteMovie(1,"")
         favoriteMovieDao.insertFavoriteMovie(favoriteMovie)
 
         val favoriteMovies =
