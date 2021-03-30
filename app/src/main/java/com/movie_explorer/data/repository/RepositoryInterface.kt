@@ -22,7 +22,7 @@ interface RepositoryInterface {
 
     fun getAllMovies(): Flow<List<Movie>>
 
-    suspend fun searchMovieByName(query: String?): List<Movie>
+    suspend fun searchMovieByName(query: String): List<Movie>
 
 
     //favoriteMovie

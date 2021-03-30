@@ -38,7 +38,7 @@ class Repository @Inject constructor(
 
     override fun getAllMovies() = movieDao.getAllMovies()
 
-    override suspend fun searchMovieByName(query: String?) = movieDao.searchMovieByName(query)
+    override suspend fun searchMovieByName(query: String) = movieDao.searchMovieByName(query)
 
 
     //favoriteMovie

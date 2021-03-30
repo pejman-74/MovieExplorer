@@ -13,7 +13,7 @@ abstract class BaseRepository {
             } catch (throwable: Throwable) {
                 if (BuildConfig.DEBUG)
                     throwable.printStackTrace()
-                ResourceResult.Failure(throwable.message)
+                ResourceResult.Failure(false,throwable.message)
             }
         }
     }

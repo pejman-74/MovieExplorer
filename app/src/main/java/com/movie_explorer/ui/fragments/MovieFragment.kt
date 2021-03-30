@@ -5,13 +5,17 @@ import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.movie_explorer.R
 import com.movie_explorer.databinding.FragmentMovieBinding
 import com.movie_explorer.ui.adapters.MovieAdapter
+import com.movie_explorer.utils.observeOnce
 import com.movie_explorer.utils.showLongToast
 import com.movie_explorer.viewmodel.MainViewModel
 import com.movie_explorer.wrapper.ResourceResult
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnCloseListener {
@@ -44,74 +48,65 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
             when (it) {
                 is ResourceResult.Failure -> {
                     vBinding.rvMovies.hideShimmer()
-                    requireContext().showLongToast(getString(R.string.unknown_error))
+                    if (it.isInExceptionMode) {
+                        requireContext().showLongToast(getString(R.string.enable_internet))
+                        vBinding.rvMovies.hideShimmer()
+                        vBinding.imDissatisfied.visibility = View.VISIBLE
+                        isInExceptionMode = true
+
+                    } else
+                        requireContext().showLongToast(getString(R.string.unknown_error))
                 }
                 ResourceResult.Loading -> {
                     vBinding.rvMovies.showShimmer()
                 }
                 is ResourceResult.Success -> {
+
                     val movies = it.value.movies
                     movieAdapter.setMovieList(movies)
-                    /* scroll to top when received mavis not empty and
-                      last query is null(mean of that, this is a user search not initial search)*/
-                    if (movies.isNotEmpty() && !lastQuery.isNullOrEmpty())
-                        vBinding.rvMovies.smoothScrollToPosition(0)
+
+                    /*Scroll to top if user searching*/
+                    if (lastQuery != null)
+                        scrollTop()
 
                     vBinding.rvMovies.hideShimmer()
                     vBinding.imDissatisfied.visibility = View.GONE
                     lastQuery = null
+                    isInExceptionMode = false
                 }
             }
         })
 
-        //observing all cached movies
-        vModel.allCacheMovies.observe(viewLifecycleOwner, {
-            /**
-            if cache is empty and connection not available,mean is:
-            user lunched the app for first time without internet connection.
-             */
-            if (it.isEmpty() && !vModel.hasInternetConnection()) {
-                requireContext().showLongToast(getString(R.string.enable_internet))
-                vBinding.rvMovies.hideShimmer()
-                vBinding.imDissatisfied.visibility = View.VISIBLE
-                isInExceptionMode = true
-                return@observe
-            } else {
-                isInExceptionMode = false
-            }
-            //if cache is empty then searching for get initializing movies
-            if (it.isEmpty()) {
-                vModel.searchMovie()
-                return@observe
-            }
-            //set data if recyclerView is empty (initial movie for app lunch time)
-            if (movieAdapter.itemCount == 0)
-                movieAdapter.setMovieList(it)
-        })
+        if (vModel.movieSearchResponse.value == null)
+            vModel.searchMovie()
 
         //observing live internet connection
         vModel.hasInternetConnectionLive.observe(viewLifecycleOwner, { hasConnection ->
-            //if cache is empty and connected to internet searching for get initializing movies
-            if (hasConnection == true && vModel.allCacheMovies.value.isNullOrEmpty())
-            //check user have previous search otherwise search initializing
-                if (lastQuery.isNullOrBlank())
-                    vModel.searchMovie()
-                else
-                    vModel.searchMovie(lastQuery)
+
+            if (hasConnection) {
+                when {
+                    !lastQuery.isNullOrBlank() ->
+                        vModel.searchMovie(lastQuery!!)
+                    isInExceptionMode ->
+                        vModel.searchMovie()
+                }
+
+            }
         })
 
     }
 
+    private fun scrollTop() = lifecycleScope.launch {
+        delay(100)
+        if (movieAdapter.itemCount > 0)
+            vBinding.rvMovies.smoothScrollToPosition(0)
+    }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
 
         //save query
         lastQuery = query
 
-        if (isInExceptionMode) {
-            requireContext().showLongToast(getString(R.string.enable_internet))
-            return true
-        }
         query?.let { vModel.searchMovie(it) }
         return true
     }
@@ -130,7 +125,10 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
     }
 
     override fun onClose(): Boolean {
-        vModel.allCacheMovies.value?.let { movieAdapter.setMovieList(it) }
+        vModel.allCacheMovies.observeOnce(viewLifecycleOwner, {
+            movieAdapter.setMovieList(it)
+            scrollTop()
+        })
         return false
     }
 }

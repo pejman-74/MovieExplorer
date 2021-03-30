@@ -49,7 +49,7 @@ class MainViewModelTest {
 
 
     @Test
-    fun `search movie with available network, should return data from api call`() {
+    fun `search movie with available network, should return data`() {
         mainViewModel.searchMovie()
         val movieSearchResponseValue =
             mainViewModel.movieSearchResponse.getOrAwaitValue() as ResourceResult.Success
@@ -72,22 +72,16 @@ class MainViewModelTest {
         assertThat(mainViewModel.allCacheMovies.getOrAwaitValue()).isEmpty()
     }
 
-
     @Test
-    fun `search movie with NOT available network, should return movies from cached`() {
-
-        //for filling database
-        mainViewModel.searchMovie()
-
-        //turn off the network and then searching
+    fun `search movie with NOT available network AND empty cache, should return failure with exception mode is true`() {
         fakeConnectionChecker.setIsNetworkAvailable(false)
         mainViewModel.searchMovie()
-
         val movieSearchResponseValue =
-            mainViewModel.movieSearchResponse.getOrAwaitValue() as ResourceResult.Success
-
-        assertThat(movieSearchResponseValue.value.movies).isEqualTo(dummyMovieApisResponse.movies)
+            mainViewModel.movieSearchResponse.getOrAwaitValue() as ResourceResult.Failure
+        assertThat(movieSearchResponseValue.isInExceptionMode)
+            .isEqualTo(true)
     }
+
 
     @Test
     fun `insert favorite movie,should return in allMovieAndFavoriteMovie`() {

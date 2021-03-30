@@ -11,7 +11,7 @@ class FakeConnectionLive : ConnectionCheckerInterface {
         this.isNetworkAvailable = isNetworkAvailable
     }
 
-    override fun hasInternetConnection(): Boolean {
+    override suspend fun hasInternetConnection(): Boolean {
         return isNetworkAvailable
     }
 

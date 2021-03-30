@@ -2,6 +2,7 @@ package com.movie_explorer.viewmodel
 
 import androidx.lifecycle.*
 import com.movie_explorer.data.model.FavoriteMovie
+import com.movie_explorer.data.model.Movie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.repository.RepositoryInterface
@@ -19,37 +20,50 @@ class MainViewModel @Inject constructor(
 
     private val _movieSearchResponse = MutableLiveData<ResourceResult<MovieApiResponse>>()
     val movieSearchResponse: MutableLiveData<ResourceResult<MovieApiResponse>> get() = _movieSearchResponse
-    fun searchMovie(query: String? = null) = viewModelScope.launch {
+
+    fun searchMovie(query: String = "") = viewModelScope.launch {
         _movieSearchResponse.postValue(ResourceResult.Loading)
 
-        //if connection available,search in remote api and cache the result otherwise search in database
-        if (connectionChecker.hasInternetConnection()) {
-            val movieApiResponse = repository.searchMovieApi(query)
-            _movieSearchResponse.postValue(movieApiResponse)
+        val searchMovieResult = ArrayList<Movie>()
 
-            cacheMovieApiResponseResourceResult(movieApiResponse)
-        } else {
-
-            val movies = repository.searchMovieByName(query)
+        //get from db and post value
+        val dbMovies = repository.searchMovieByName(query)
+        if (dbMovies.isNotEmpty()) {
+            searchMovieResult.addAll(dbMovies)
             //convert to MovieApiResponse
-            val movieApiResponse = MovieApiResponse(movies)
-            _movieSearchResponse.postValue(ResourceResult.Success(movieApiResponse))
-
+            val convertedMovieApiResponse = MovieApiResponse(searchMovieResult.distinct())
+            _movieSearchResponse.postValue(ResourceResult.Success(convertedMovieApiResponse))
         }
+
+        //get from server(if has internet) and merge with db search result and again post value
+        if (connectionChecker.hasInternetConnection()) {
+            when (val resourceResult = repository.searchMovieApi(query)) {
+                is ResourceResult.Success -> {
+                    val value = resourceResult.value
+                    searchMovieResult.addAll(value.movies)
+                    saveMovies(value.movies)
+                    val movieApiResponse =
+                        MovieApiResponse(searchMovieResult.distinct(), value.metadata)
+                    _movieSearchResponse.postValue(ResourceResult.Success(movieApiResponse))
+                }
+                else -> _movieSearchResponse.postValue(resourceResult)
+            }
+
+        } else {
+            /*  If the Internet was down and the database search result is empty
+              then post failure with true exception mode*/
+            _movieSearchResponse.postValue(ResourceResult.Failure(searchMovieResult.isEmpty()))
+        }
+
     }
 
-    private fun cacheMovieApiResponseResourceResult(movieApiResponse: ResourceResult<MovieApiResponse>) =
-        viewModelScope.launch {
-            when (movieApiResponse) {
-                is ResourceResult.Success -> repository.saveMovie(movieApiResponse.value.movies)
-                else -> Unit
-            }
-        }
+    private fun saveMovies(movies: List<Movie>) = viewModelScope.launch {
+        repository.saveMovie(movies)
+    }
 
-    val allCacheMovies = repository.getAllMovies().asLiveData(viewModelScope.coroutineContext)
+    val allCacheMovies = repository.getAllMovies().asLiveData()
 
 
-    fun hasInternetConnection(): Boolean = connectionChecker.hasInternetConnection()
     val hasInternetConnectionLive: LiveData<Boolean> =
         connectionChecker.hasInternetConnectionLive()
 

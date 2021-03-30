@@ -46,8 +46,9 @@ class FakeRepository : RepositoryInterface {
         }
     }
 
-    override suspend fun searchMovieByName(query: String?): List<Movie> {
-        return if (query == null)
+
+    override suspend fun searchMovieByName(query: String): List<Movie> {
+        return if (query == "")
             fakeMovieDataBase
         else
             fakeMovieDataBase.filter { it.title.contains(query) }
