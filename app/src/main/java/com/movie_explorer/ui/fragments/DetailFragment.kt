@@ -21,20 +21,23 @@ import com.movie_explorer.wrapper.ResourceResult
 
 class DetailFragment : Fragment() {
 
-    private lateinit var vBinding: FragmentDetailBinding
+    private var _shimmerViewBinding: FragmentDetailPlaceHolderBinding? = null
+    private val shimmerViewBinding get() = _shimmerViewBinding!!
+    private var _vBinding: FragmentDetailBinding? = null
+    private val vBinding get() = _vBinding!!
+
     private val vModel: MainViewModel by activityViewModels()
     private val movieImagesAdapter by lazy { MovieImageAdapter() }
     private val navArgs: DetailFragmentArgs by navArgs()
     private lateinit var menuItem: MenuItem
     private var isFavored = false
-    private lateinit var shimmerViewBinding: FragmentDetailPlaceHolderBinding
     private var hasFailingLoad = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        vBinding = FragmentDetailBinding.inflate(inflater, container, false)
-        shimmerViewBinding = FragmentDetailPlaceHolderBinding.inflate(inflater, container, false)
+        _vBinding = FragmentDetailBinding.inflate(inflater, container, false)
+        _shimmerViewBinding = FragmentDetailPlaceHolderBinding.inflate(inflater, container, false)
         return shimmerViewBinding.root
     }
 
@@ -142,5 +145,11 @@ class DetailFragment : Fragment() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _shimmerViewBinding = null
+        _vBinding = null
     }
 }

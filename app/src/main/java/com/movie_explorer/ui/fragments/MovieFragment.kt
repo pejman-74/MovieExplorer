@@ -20,7 +20,9 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
-    private lateinit var vBinding: FragmentMovieBinding
+    private var _vBinding: FragmentMovieBinding? = null
+    private val vBinding get() = _vBinding!!
+
     private val vModel: MainViewModel by activityViewModels()
     private val movieAdapter by lazy { MovieAdapter() }
     private lateinit var searchView: SearchView
@@ -30,7 +32,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        vBinding = FragmentMovieBinding.inflate(inflater, container, false)
+        _vBinding = FragmentMovieBinding.inflate(inflater, container, false)
         return vBinding.root
     }
 
@@ -130,5 +132,10 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
             scrollTop()
         })
         return false
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _vBinding=null
     }
 }

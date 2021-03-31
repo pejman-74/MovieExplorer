@@ -14,7 +14,9 @@ import com.movie_explorer.viewmodel.MainViewModel
 
 class FavoriteFragment : Fragment() {
 
-    lateinit var vBinding: FragmentFavoriteBinding
+    private var _vBinding: FragmentFavoriteBinding? = null
+    private val vBinding get() = _vBinding!!
+
     private val vModel: MainViewModel by activityViewModels()
     private val favoriteMovieAdapter by lazy { FavoriteMovieAdapter(requireActivity(), vModel) }
 
@@ -22,7 +24,7 @@ class FavoriteFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        vBinding = FragmentFavoriteBinding.inflate(inflater, container, false)
+        _vBinding = FragmentFavoriteBinding.inflate(inflater, container, false)
         return vBinding.root
     }
 
@@ -44,5 +46,10 @@ class FavoriteFragment : Fragment() {
                     }
             favoriteMovieAdapter.setMovieList(movies)
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _vBinding
     }
 }
