@@ -65,7 +65,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
                 is ResourceResult.Success -> {
 
                     val movies = it.value.movies
-                    movieAdapter.setMovieList(movies)
+                    movieAdapter.submitList(movies)
 
                     /*Scroll to top if user searching*/
                     if (lastQuery != null)
@@ -128,7 +128,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
 
     override fun onClose(): Boolean {
         vModel.allCacheMovies.observeOnce(viewLifecycleOwner, {
-            movieAdapter.setMovieList(it)
+            movieAdapter.submitList(it)
             scrollTop()
         })
         return false

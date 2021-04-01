@@ -7,9 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.AsyncListDiffer
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 import com.google.android.material.card.MaterialCardView
 import com.movie_explorer.R
 import com.movie_explorer.data.model.Movie
@@ -21,32 +19,20 @@ import com.movie_explorer.viewmodel.MainViewModel
 class FavoriteMovieAdapter(
     private val requireActivity: FragmentActivity,
     private val mainViewModel: MainViewModel
-) : RecyclerView.Adapter<MovieViewHolder>(), ActionMode.Callback {
-    private val movieDiffCallback = object : DiffUtil.ItemCallback<Movie>() {
-        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean =
-            oldItem.id == newItem.id
+) : ListAdapter<Movie,MovieViewHolder>(GenericDiffUtil()), ActionMode.Callback {
 
-        override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean =
-            oldItem == newItem
-    }
-    private val movieListDiffer = AsyncListDiffer(this, movieDiffCallback)
-    private val movies: List<Movie> get() = movieListDiffer.currentList
     private var actionMode: ActionMode? = null
 
     private val selectedMoviesId by lazy { ArrayList<Int>() }
     private val selectedMovieViewHolders by lazy { HashSet<MovieViewHolder>() }
 
 
-    fun setMovieList(movies: List<Movie>) {
-        movieListDiffer.submitList(movies)
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         return MovieViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        val movie = movies[position]
+        val movie = getItem(position)
         holder.bind(movie)
         holder.itemView.setOnLongClickListener {
             if (actionMode == null) {
@@ -69,7 +55,6 @@ class FavoriteMovieAdapter(
         }
     }
 
-    override fun getItemCount(): Int = movies.size
 
     private fun setActionBarTitle() {
         selectedMoviesId.size.let {

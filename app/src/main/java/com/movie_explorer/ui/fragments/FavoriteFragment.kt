@@ -44,7 +44,7 @@ class FavoriteFragment : Fragment() {
                     .map { movieAndFavoriteMovie ->
                         movieAndFavoriteMovie.movie
                     }
-            favoriteMovieAdapter.setMovieList(movies)
+            favoriteMovieAdapter.submitList(movies)
         })
     }
 

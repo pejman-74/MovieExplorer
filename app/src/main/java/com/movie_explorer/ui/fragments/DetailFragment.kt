@@ -65,7 +65,7 @@ class DetailFragment : Fragment() {
                         val movieDetail = result.value
                         (requireActivity() as MainActivity).supportActionBar?.title =
                             movieDetail.title
-                        movieDetail.images?.let { it -> movieImagesAdapter.setUrls(it) }
+                        movieDetail.images?.let { it -> movieImagesAdapter.submitList(it) }
                         vBinding.tvRelease.text = movieDetail.released.trim()
                         vBinding.tvTime.text = movieDetail.runtime.trim()
                         vBinding.tvImdb.text = movieDetail.imdbRating.trim()
