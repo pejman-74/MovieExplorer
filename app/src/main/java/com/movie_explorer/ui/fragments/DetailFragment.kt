@@ -88,10 +88,10 @@ class DetailFragment : Fragment() {
 
         loadMovieDetail()
 
-        vModel.hasInternetConnectionLive.observe(viewLifecycleOwner, {
+      /*  vModel.hasInternetConnectionLive.observe(viewLifecycleOwner, {
             if (hasFailingLoad)
                loadMovieDetail()
-        })
+        })*/
     }
 
     private fun loadMovieDetail() = vModel.getMovieDetail(navArgs.movieId)

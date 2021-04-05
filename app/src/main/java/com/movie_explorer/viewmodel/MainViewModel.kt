@@ -1,71 +1,55 @@
 package com.movie_explorer.viewmodel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.movie_explorer.data.model.FavoriteMovie
-import com.movie_explorer.data.model.Movie
-import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.repository.RepositoryInterface
-import com.movie_explorer.utils.network.ConnectionCheckerInterface
+import com.movie_explorer.wrapper.RefreshType
+import com.movie_explorer.wrapper.Resource
 import com.movie_explorer.wrapper.ResourceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+@ExperimentalCoroutinesApi
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val repository: RepositoryInterface,
-    private val connectionChecker: ConnectionCheckerInterface
 ) : ViewModel() {
 
-    private val _movieSearchResponse = MutableLiveData<ResourceResult<MovieApiResponse>>()
-    val movieSearchResponse: MutableLiveData<ResourceResult<MovieApiResponse>> get() = _movieSearchResponse
 
-    fun searchMovie(query: String = "") = viewModelScope.launch {
-        _movieSearchResponse.postValue(ResourceResult.Loading)
+    private val refreshTriggerChannel = Channel<RefreshType>()
+    private val refreshTrigger = refreshTriggerChannel.receiveAsFlow()
 
-        val searchMovieResult = ArrayList<Movie>()
+    val feedMovie = refreshTrigger.flatMapLatest { refreshType ->
 
-        //get from db and post value
-        val dbMovies = repository.searchMovieByName(query)
-        if (dbMovies.isNotEmpty()) {
-            searchMovieResult.addAll(dbMovies)
-            //convert to MovieApiResponse
-            val convertedMovieApiResponse = MovieApiResponse(searchMovieResult.distinct())
-            _movieSearchResponse.postValue(ResourceResult.Success(convertedMovieApiResponse))
+        when (refreshType) {
+            RefreshType.Force -> repository.getReadyMovies(null, true)
+            RefreshType.Normal -> repository.getReadyMovies(null, false)
+            is RefreshType.Search -> repository.getReadyMovies(refreshType.query, true)
         }
 
-        //get from server(if has internet) and merge with db search result and again post value
-        if (connectionChecker.hasInternetConnection()) {
-            when (val resourceResult = repository.searchMovieApi(query)) {
-                is ResourceResult.Success -> {
-                    val value = resourceResult.value
-                    searchMovieResult.addAll(value.movies)
-                    saveMovies(value.movies)
-                    val movieApiResponse =
-                        MovieApiResponse(searchMovieResult.distinct(), value.metadata)
-                    _movieSearchResponse.postValue(ResourceResult.Success(movieApiResponse))
-                }
-                else -> _movieSearchResponse.postValue(resourceResult)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+
+    fun refreshMovieFeed(refreshType: RefreshType) = viewModelScope.launch {
+        if (feedMovie.value !is Resource.Loading)
+            when (refreshType) {
+                RefreshType.Force -> refreshTriggerChannel.send(RefreshType.Force)
+                RefreshType.Normal -> refreshTriggerChannel.send(RefreshType.Normal)
+                is RefreshType.Search -> refreshTriggerChannel.send(RefreshType.Search(refreshType.query))
             }
-
-        } else {
-            /*  If the Internet was down and the database search result is empty
-              then post failure with true exception mode*/
-            _movieSearchResponse.postValue(ResourceResult.Failure(searchMovieResult.isEmpty()))
-        }
-
     }
-
-    private fun saveMovies(movies: List<Movie>) = viewModelScope.launch {
-        repository.saveMovie(movies)
-    }
-
-    val allCacheMovies = repository.getAllMovies().asLiveData()
-
-
-    val hasInternetConnectionLive: LiveData<Boolean> =
-        connectionChecker.hasInternetConnectionLive()
 
 
     fun saveFavoriteMovie(favoriteMovie: FavoriteMovie) =
@@ -81,8 +65,8 @@ class MainViewModel @Inject constructor(
     val movieDetailResponse: MutableLiveData<ResourceResult<MovieDetail?>> get() = _movieDetailResponse
     fun getMovieDetail(movie_id: Int) = viewModelScope.launch {
         _movieDetailResponse.postValue(ResourceResult.Loading)
-
-        if (connectionChecker.hasInternetConnection()) {
+        //TODO :
+        if (true) {
             val movieDetailApiResponse = repository.getMovieDetailApi(movie_id.toString())
             _movieDetailResponse.postValue(movieDetailApiResponse)
             cacheMovieDetailResourceResult(movieDetailApiResponse)

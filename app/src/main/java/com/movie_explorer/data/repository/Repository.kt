@@ -6,9 +6,13 @@ import com.movie_explorer.data.database.dao.MovieDao
 import com.movie_explorer.data.database.dao.MovieDetailDao
 import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.Movie
+import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.network.MovieApis
+import com.movie_explorer.utils.networkBoundResource
+import com.movie_explorer.wrapper.Resource
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -20,11 +24,31 @@ class Repository @Inject constructor(
     private val movieDetailDao: MovieDetailDao
 ) : RepositoryInterface, BaseRepository() {
 
+    @ExperimentalCoroutinesApi
+    override suspend fun getReadyMovies(
+        query: String?,
+        forceRefresh: Boolean
+    ): Flow<Resource<List<Movie>>> = networkBoundResource(
+        query = {
+            if (query.isNullOrEmpty())
+                getAllMovies()
+            else
+                searchMovieByName(query)
+        },
+        fetch = { searchMovieApi(query) },
+        saveFetchResult = {
+            saveMovie(it.movies)
+        },
+        shouldFetch = {
+            forceRefresh
+        }
+    )
+
     //Api calls
 
-    override suspend fun searchMovieApi(query: String?) = safeApiCall {
+    override suspend fun searchMovieApi(query: String?): MovieApiResponse =
         movieApis.searchMovie(query)
-    }
+
 
     override suspend fun getMovieDetailApi(movie_id: String) = safeApiCall {
         movieApis.getMovieDetail(movie_id)
@@ -38,7 +62,7 @@ class Repository @Inject constructor(
 
     override fun getAllMovies() = movieDao.getAllMovies()
 
-    override suspend fun searchMovieByName(query: String) = movieDao.searchMovieByName(query)
+    override fun searchMovieByName(query: String) = movieDao.searchMovieByName(query)
 
 
     //favoriteMovie

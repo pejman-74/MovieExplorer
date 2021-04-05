@@ -8,8 +8,8 @@ import com.movie_explorer.data.network.MovieApis
 import com.movie_explorer.data.repository.Repository
 import com.movie_explorer.data.repository.RepositoryInterface
 import com.movie_explorer.utils.Constants
-import com.movie_explorer.utils.network.ConnectionCheckerInterface
-import com.movie_explorer.utils.network.LiveConnectionObserver
+import com.movie_explorer.utils.interceptor.ConnectionInterceptor
+import com.movie_explorer.utils.network.ConnectionObserver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,11 +25,21 @@ import javax.inject.Singleton
 @Module
 object NetworkModule {
 
+    @Provides
+    @Singleton
+    fun provideConnectionObserver(@ApplicationContext context: Context): ConnectionObserver =
+        ConnectionObserver(context)
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient =
+    fun provideConnectionInterceptor(connectionObserver: ConnectionObserver): ConnectionInterceptor =
+        ConnectionInterceptor(connectionObserver)
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(connectionInterceptor: ConnectionInterceptor): OkHttpClient =
         OkHttpClient.Builder().connectTimeout(20, TimeUnit.SECONDS)
+            .addInterceptor(connectionInterceptor)
             .readTimeout(20, TimeUnit.SECONDS).build()
 
 
@@ -59,10 +69,5 @@ object NetworkModule {
         favoriteMovieDao: FavoriteMovieDao,
         movieDetailDao: MovieDetailDao
     ): RepositoryInterface = Repository(movieApis, movieDao, favoriteMovieDao, movieDetailDao)
-
-    @Provides
-    @Singleton
-    fun provideConnectionChecker(@ApplicationContext context: Context): ConnectionCheckerInterface =
-        LiveConnectionObserver(context)
 
 }

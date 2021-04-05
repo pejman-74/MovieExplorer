@@ -3,20 +3,21 @@ package com.movie_explorer.ui.fragments
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.movie_explorer.R
 import com.movie_explorer.databinding.FragmentMovieBinding
 import com.movie_explorer.ui.adapters.MovieAdapter
-import com.movie_explorer.utils.observeOnce
-import com.movie_explorer.utils.showLongToast
 import com.movie_explorer.viewmodel.MainViewModel
-import com.movie_explorer.wrapper.ResourceResult
+import com.movie_explorer.wrapper.RefreshType
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
@@ -27,7 +28,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
     private val movieAdapter by lazy { MovieAdapter() }
     private lateinit var searchView: SearchView
     private var lastQuery: String? = null
-    private var isInExceptionMode = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,6 +37,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
         return vBinding.root
     }
 
+    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -45,63 +47,45 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
             adapter = movieAdapter
         }
 
-        //observing search result (cache and network)
-        vModel.movieSearchResponse.observe(viewLifecycleOwner, {
-            when (it) {
-                is ResourceResult.Failure -> {
-                    vBinding.rvMovies.hideShimmer()
-                    if (it.isInExceptionMode) {
-                        requireContext().showLongToast(getString(R.string.enable_internet))
-                        vBinding.rvMovies.hideShimmer()
-                        vBinding.imDissatisfied.visibility = View.VISIBLE
-                        isInExceptionMode = true
-
-                    } else
-                        requireContext().showLongToast(getString(R.string.unknown_error))
-                }
-                ResourceResult.Loading -> {
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            vModel.feedMovie.collect {
+                val result = if (it == null) {
                     vBinding.rvMovies.showShimmer()
+                    return@collect
+                } else {
+                    vBinding.rvMovies.hideShimmer()
+                    it
                 }
-                is ResourceResult.Success -> {
-
-                    val movies = it.value.movies
-                    movieAdapter.submitList(movies)
-
-                    /*Scroll to top if user searching*/
+                vBinding.imDissatisfied.isVisible =
+                    result.error != null && result.data.isNullOrEmpty()
+                vBinding.btnRetry.isVisible = result.error != null && result.data.isNullOrEmpty()
+                movieAdapter.submitList(it.data) {
                     if (lastQuery != null)
                         scrollTop()
-
-                    vBinding.rvMovies.hideShimmer()
-                    vBinding.imDissatisfied.visibility = View.GONE
-                    lastQuery = null
-                    isInExceptionMode = false
                 }
             }
-        })
+        }
 
-        if (vModel.movieSearchResponse.value == null)
-            vModel.searchMovie()
 
-        //observing live internet connection
-        vModel.hasInternetConnectionLive.observe(viewLifecycleOwner, { hasConnection ->
-
-            if (hasConnection) {
-                when {
-                    !lastQuery.isNullOrBlank() ->
-                        vModel.searchMovie(lastQuery!!)
-                    isInExceptionMode ->
-                        vModel.searchMovie()
-                }
-
-            }
-        })
+        vBinding.btnRetry.setOnClickListener {
+            if (!lastQuery.isNullOrBlank())
+                vModel.refreshMovieFeed(RefreshType.Search(lastQuery!!))
+            else
+                vModel.refreshMovieFeed(RefreshType.Force)
+        }
 
     }
 
+
+    override fun onStart() {
+        super.onStart()
+        vModel.refreshMovieFeed(RefreshType.Force)
+    }
+
+    //Scroll to top if user searching
     private fun scrollTop() = lifecycleScope.launch {
-        delay(100)
         if (movieAdapter.itemCount > 0)
-            vBinding.rvMovies.smoothScrollToPosition(0)
+            vBinding.rvMovies.scrollToPosition(0)
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -109,7 +93,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
         //save query
         lastQuery = query
 
-        query?.let { vModel.searchMovie(it) }
+        query?.let { vModel.refreshMovieFeed(RefreshType.Search(it)) }
         return true
     }
 
@@ -127,10 +111,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
     }
 
     override fun onClose(): Boolean {
-        vModel.allCacheMovies.observeOnce(viewLifecycleOwner, {
-            movieAdapter.submitList(it)
-            scrollTop()
-        })
+        vModel.refreshMovieFeed(RefreshType.Normal)
         return false
     }
 

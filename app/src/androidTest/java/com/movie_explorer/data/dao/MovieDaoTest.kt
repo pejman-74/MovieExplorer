@@ -59,12 +59,12 @@ class MovieDaoTest {
     @Test
     fun search_movie_by_name() = runBlockingTest {
         movieDao.insertMovie(dummyMovieApisResponse.movies)
-        assertThat(movieDao.searchMovieByName("The Shawshank Redemption").size).isEqualTo(1)
+        assertThat(movieDao.searchMovieByName("The Shawshank Redemption").first().size).isEqualTo(1)
     }
 
     @Test
     fun search_movie_by_name_with_empty_parameter_should_return_all_movies() = runBlockingTest {
         movieDao.insertMovie(dummyMovieApisResponse.movies)
-        assertThat(movieDao.searchMovieByName("").size).isEqualTo(dummyMovieApisResponse.movies.size)
+        assertThat(movieDao.searchMovieByName("").first().size).isEqualTo(dummyMovieApisResponse.movies.size)
     }
 }

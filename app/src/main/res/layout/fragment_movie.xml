@@ -20,6 +20,18 @@
         app:srcCompat="@drawable/ic_dissatisfied"
         app:tint="@color/imageViewDissatisfiedTintColor" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/retry"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:backgroundTint="@color/actionBarBackgroundColor"
+        app:layout_constraintEnd_toEndOf="@+id/im_dissatisfied"
+        app:layout_constraintStart_toStartOf="@+id/im_dissatisfied"
+        app:layout_constraintTop_toBottomOf="@+id/im_dissatisfied" />
+
     <com.todkars.shimmer.ShimmerRecyclerView
         android:id="@+id/rv_movies"
         android:layout_width="match_parent"
