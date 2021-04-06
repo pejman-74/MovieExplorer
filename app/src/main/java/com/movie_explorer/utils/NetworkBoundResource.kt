@@ -1,39 +1,9 @@
 package com.movie_explorer.utils
 
 import com.movie_explorer.wrapper.Resource
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.flow
 
-@ExperimentalCoroutinesApi
-inline fun <ResultType, RequestType> networkBoundResource(
-    crossinline query: () -> Flow<ResultType>,
-    crossinline fetch: suspend () -> RequestType,
-    crossinline saveFetchResult: suspend (RequestType) -> Unit,
-    crossinline shouldFetch: (ResultType) -> Boolean = { true },
-) = channelFlow {
-    val data = query().first()
-
-    if (shouldFetch(data)) {
-        val loading = launch {
-            query().collect { send(Resource.Loading(it)) }
-        }
-        try {
-            val fetched = fetch()
-            saveFetchResult(fetched)
-            loading.cancel()
-            query().collect { send(Resource.Success(it)) }
-        } catch (t: Throwable) {
-            loading.cancel()
-            query().collect { send(Resource.Error(t, it)) }
-        }
-
-    } else {
-        query().collect { send(Resource.Success(it)) }
-    }
-}
-
-inline fun <ResultType> coldNetworkBoundResource(
+inline fun <ResultType> networkBoundResource(
     crossinline query: suspend () -> ResultType?,
     crossinline fetch: suspend () -> ResultType,
     crossinline saveFetchResult: suspend (ResultType) -> Unit,

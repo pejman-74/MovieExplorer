@@ -6,16 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.repository.RepositoryInterface
+import com.movie_explorer.utils.Constants.Companion.TAG
 import com.movie_explorer.wrapper.RefreshType
 import com.movie_explorer.wrapper.Resource
 import com.movie_explorer.wrapper.ResourceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,7 +40,7 @@ class MainViewModel @Inject constructor(
 
 
     fun refreshMovieFeed(refreshType: RefreshType) = viewModelScope.launch {
-        if (feedMovie.value !is Resource.Loading)
+        if (feedMovie.first() !is Resource.Loading)
             when (refreshType) {
                 RefreshType.Force -> refreshTriggerChannel.send(RefreshType.Force)
                 RefreshType.Normal -> refreshTriggerChannel.send(RefreshType.Normal)

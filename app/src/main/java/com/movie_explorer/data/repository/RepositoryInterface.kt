@@ -29,9 +29,9 @@ interface RepositoryInterface {
     //movie
     suspend fun saveMovie(movies: List<Movie>)
 
-    fun getAllMovies(): Flow<List<Movie>>
+    suspend fun getAllMovies(): List<Movie>
 
-    fun searchMovieByName(query: String): Flow<List<Movie>>
+    suspend fun searchMovieByName(query: String): List<Movie>
 
 
     //favoriteMovie

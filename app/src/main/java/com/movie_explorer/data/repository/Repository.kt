@@ -9,7 +9,6 @@ import com.movie_explorer.data.model.Movie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.network.MovieApis
-import com.movie_explorer.utils.coldNetworkBoundResource
 import com.movie_explorer.utils.networkBoundResource
 import com.movie_explorer.wrapper.Resource
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -37,9 +36,9 @@ class Repository @Inject constructor(
             else
                 searchMovieByName(query)
         },
-        fetch = { searchMovieApi(query) },
+        fetch = { searchMovieApi(query).movies },
         saveFetchResult = {
-            saveMovie(it.movies)
+            saveMovie(it)
         },
         shouldFetch = {
             forceRefresh
@@ -47,7 +46,7 @@ class Repository @Inject constructor(
     )
 
     override suspend fun getReadyMovieDetail(movie_id: String):
-            Flow<Resource<MovieDetail>> = coldNetworkBoundResource(
+            Flow<Resource<MovieDetail>> = networkBoundResource(
         query = {
             getMovieDetail(movie_id)
         },
@@ -76,9 +75,9 @@ class Repository @Inject constructor(
     //movie
     override suspend fun saveMovie(movies: List<Movie>) = movieDao.insertMovie(movies)
 
-    override fun getAllMovies() = movieDao.getAllMovies()
+    override suspend fun getAllMovies() = movieDao.getAllMovies()
 
-    override fun searchMovieByName(query: String) = movieDao.searchMovieByName(query)
+    override suspend fun searchMovieByName(query: String) = movieDao.searchMovieByName(query)
 
 
     //favoriteMovie

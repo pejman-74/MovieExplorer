@@ -59,7 +59,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
                 vBinding.failingView.root.isVisible =
                     result.error != null && result.data.isNullOrEmpty()
 
-                movieAdapter.submitList(it.data) {
+                movieAdapter.submitList(result.data) {
                     if (lastQuery != null)
                         scrollTop()
                 }

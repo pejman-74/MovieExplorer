@@ -14,8 +14,8 @@ interface MovieDao {
     suspend fun insertMovie(movies: List<Movie>)
 
     @Query("SELECT * FROM MOVIE WHERE title like '%' || :query ||'%' ")
-    fun searchMovieByName(query: String): Flow<List<Movie>>
+    suspend fun searchMovieByName(query: String): List<Movie>
 
     @Query("SELECT * FROM MOVIE")
-    fun getAllMovies(): Flow<List<Movie>>
+    suspend fun getAllMovies(): List<Movie>
 }
