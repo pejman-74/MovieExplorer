@@ -56,9 +56,9 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
                     vBinding.rvMovies.hideShimmer()
                     it
                 }
-                vBinding.imDissatisfied.isVisible =
+                vBinding.failingView.root.isVisible =
                     result.error != null && result.data.isNullOrEmpty()
-                vBinding.btnRetry.isVisible = result.error != null && result.data.isNullOrEmpty()
+
                 movieAdapter.submitList(it.data) {
                     if (lastQuery != null)
                         scrollTop()
@@ -67,7 +67,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
         }
 
 
-        vBinding.btnRetry.setOnClickListener {
+        vBinding.failingView.btnRetry.setOnClickListener {
             if (!lastQuery.isNullOrBlank())
                 vModel.refreshMovieFeed(RefreshType.Search(lastQuery!!))
             else

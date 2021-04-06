@@ -6,40 +6,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragments.MovieFragment">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/im_dissatisfied"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_dissatisfied"
-        app:tint="@color/imageViewDissatisfiedTintColor" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_retry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/retry"
-        android:textColor="@color/white"
-        android:visibility="gone"
-        app:backgroundTint="@color/actionBarBackgroundColor"
-        app:layout_constraintEnd_toEndOf="@+id/im_dissatisfied"
-        app:layout_constraintStart_toStartOf="@+id/im_dissatisfied"
-        app:layout_constraintTop_toBottomOf="@+id/im_dissatisfied" />
 
     <com.todkars.shimmer.ShimmerRecyclerView
         android:id="@+id/rv_movies"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:shimmer_recycler_auto_start="true"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:shimmer_recycler_auto_start="true"
         app:shimmer_recycler_item_count="10"
         app:shimmer_recycler_layout="@layout/movie_item_palceholder"
         tools:listitem="@layout/movie_item" />
+
+    <include
+        android:id="@+id/failing_view"
+        android:visibility="gone"
+        layout="@layout/failing_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
