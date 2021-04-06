@@ -2,10 +2,7 @@ package com.movie_explorer.utils
 
 import com.movie_explorer.wrapper.Resource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
@@ -33,5 +30,33 @@ inline fun <ResultType, RequestType> networkBoundResource(
 
     } else {
         query().collect { send(Resource.Success(it)) }
+    }
+}
+
+inline fun <ResultType> coldNetworkBoundResource(
+    crossinline query: suspend () -> ResultType?,
+    crossinline fetch: suspend () -> ResultType,
+    crossinline saveFetchResult: suspend (ResultType) -> Unit,
+    crossinline shouldFetch: (ResultType?) -> Boolean = { true },
+) = flow<Resource<ResultType>> {
+    val data = query()
+
+    if (shouldFetch(data)) {
+
+        emit(Resource.Loading(data))
+
+        try {
+            val fetched = fetch()
+            emit(Resource.Success(fetched))
+            saveFetchResult(fetched)
+        } catch (t: Throwable) {
+            emit(Resource.Error(t, data))
+        }
+
+    } else {
+        if (data == null)
+            emit(Resource.Error(NoSuchElementException("Cant't load data")))
+        else
+            emit(Resource.Success(data))
     }
 }

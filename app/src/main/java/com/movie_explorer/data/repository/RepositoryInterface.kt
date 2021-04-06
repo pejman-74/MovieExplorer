@@ -16,11 +16,13 @@ interface RepositoryInterface {
         query: String?,
         forceRefresh: Boolean,
     ): Flow<Resource<List<Movie>>>
-
+    suspend fun getReadyMovieDetail(
+        movie_id: String,
+    ): Flow<Resource<MovieDetail>>
     /*Api calls*/
     suspend fun searchMovieApi(query: String? = null): MovieApiResponse
 
-    suspend fun getMovieDetailApi(movie_id: String): ResourceResult<MovieDetail>
+    suspend fun getMovieDetailApi(movie_id: String):MovieDetail
 
     /*Database calls*/
 
@@ -43,5 +45,5 @@ interface RepositoryInterface {
     //MovieDetail
     suspend fun saveMovieDetail(movieDetail: MovieDetail)
 
-    suspend fun getMovieDetail(movieDetailId: Int): MovieDetail?
+    suspend fun getMovieDetail(movieDetailId: String): MovieDetail?
 }

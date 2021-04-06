@@ -1,6 +1,5 @@
 package com.movie_explorer.viewmodel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -61,22 +60,14 @@ class MainViewModel @Inject constructor(
     val allMovieAndFavoriteMovie = repository.favoriteMovies().asLiveData()
 
 
-    private val _movieDetailResponse = MutableLiveData<ResourceResult<MovieDetail?>>()
-    val movieDetailResponse: MutableLiveData<ResourceResult<MovieDetail?>> get() = _movieDetailResponse
-    fun getMovieDetail(movie_id: Int) = viewModelScope.launch {
-        _movieDetailResponse.postValue(ResourceResult.Loading)
-        //TODO :
-        if (true) {
-            val movieDetailApiResponse = repository.getMovieDetailApi(movie_id.toString())
-            _movieDetailResponse.postValue(movieDetailApiResponse)
-            cacheMovieDetailResourceResult(movieDetailApiResponse)
+    private val getMovieDetailTriggerChannel = Channel<String>()
+    private val getMovieDetailTrigger = getMovieDetailTriggerChannel.receiveAsFlow()
+    val movieDetailResponse = getMovieDetailTrigger.flatMapLatest { movieId ->
+        repository.getReadyMovieDetail(movieId)
+    }
 
-        } else {
-            val movieDetail = repository.getMovieDetail(movie_id)
-            //convert to MovieApiResponse
-            val movieDetailApiResponse = ResourceResult.Success(movieDetail)
-            _movieDetailResponse.postValue(movieDetailApiResponse)
-        }
+    fun getMovieDetail(movie_id: String) = viewModelScope.launch {
+        getMovieDetailTriggerChannel.send(movie_id)
     }
 
 

@@ -5,41 +5,50 @@ import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.movie_explorer.R
 import com.movie_explorer.data.model.FavoriteMovie
+import com.movie_explorer.data.model.MovieDetail
+import com.movie_explorer.databinding.FailingLayoutBinding
 import com.movie_explorer.databinding.FragmentDetailBinding
 import com.movie_explorer.databinding.FragmentDetailPlaceHolderBinding
 import com.movie_explorer.ui.MainActivity
 import com.movie_explorer.ui.adapters.MovieImageAdapter
 import com.movie_explorer.utils.getCurrentUTCDateTime
+import com.movie_explorer.utils.interceptor.NoInternetException
 import com.movie_explorer.utils.observeOnce
 import com.movie_explorer.utils.showLongToast
 import com.movie_explorer.viewmodel.MainViewModel
-import com.movie_explorer.wrapper.ResourceResult
+import com.movie_explorer.wrapper.Resource
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 
-
+@ExperimentalCoroutinesApi
 class DetailFragment : Fragment() {
 
     private var _shimmerViewBinding: FragmentDetailPlaceHolderBinding? = null
     private val shimmerViewBinding get() = _shimmerViewBinding!!
     private var _vBinding: FragmentDetailBinding? = null
     private val vBinding get() = _vBinding!!
+    private var _failingViewBinding: FailingLayoutBinding? = null
+    private val failingViewBinding get() = _failingViewBinding!!
 
     private val vModel: MainViewModel by activityViewModels()
     private val movieImagesAdapter by lazy { MovieImageAdapter() }
     private val navArgs: DetailFragmentArgs by navArgs()
     private lateinit var menuItem: MenuItem
     private var isFavored = false
-    private var hasFailingLoad = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _vBinding = FragmentDetailBinding.inflate(inflater, container, false)
         _shimmerViewBinding = FragmentDetailPlaceHolderBinding.inflate(inflater, container, false)
+        _failingViewBinding = FailingLayoutBinding.inflate(inflater, container, false)
         return shimmerViewBinding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,56 +58,62 @@ class DetailFragment : Fragment() {
             adapter = movieImagesAdapter
             vBinding.dotsIndicator.setViewPager2(this)
         }
-        vModel.movieDetailResponse.observe(viewLifecycleOwner, { result ->
-            when (result) {
-                is ResourceResult.Failure -> {
-                    requireContext().showLongToast(getString(R.string.unknown_error))
-                }
-                is ResourceResult.Loading -> Unit
-                is ResourceResult.Success -> {
-                    //if result is null, mean is not founded in db and connection is off
-                    if (result.value == null) {
-                        hasFailingLoad = true
-                        requireContext().showLongToast(getString(R.string.cant_load_from_cache))
-                    } else {
-                        hasFailingLoad = false
-                        val movieDetail = result.value
-                        (requireActivity() as MainActivity).supportActionBar?.title =
-                            movieDetail.title
-                        movieDetail.images?.let { it -> movieImagesAdapter.submitList(it) }
-                        vBinding.tvRelease.text = movieDetail.released.trim()
-                        vBinding.tvTime.text = movieDetail.runtime.trim()
-                        vBinding.tvImdb.text = movieDetail.imdbRating.trim()
-                        vBinding.tvDirector.text = movieDetail.director.trim()
-                        vBinding.tvCountry.text = movieDetail.country.trim()
-                        vBinding.tvDescription.text =
-                            getString(
-                                R.string.movie_description,
-                                movieDetail.plot.trim(),
-                                movieDetail.actors.trim(),
-                                movieDetail.writer.trim(),
-                                movieDetail.awards.trim()
-                            )
+        failingViewBinding.btnRetry.setOnClickListener {
+            loadMovieDetail()
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            vModel.movieDetailResponse.collect { result ->
+                when (result) {
+                    is Resource.Error -> {
+                        showFailingLayout()
+                        when (result.error!!) {
+                            is NoInternetException ->
+                                requireContext().showLongToast(getString(R.string.enable_internet))
+                            else ->
+                                requireContext().showLongToast(getString(R.string.unknown_error))
+                        }
+                    }
+                    is Resource.Loading -> Unit
+                    is Resource.Success -> {
+                        setUiWithMovieDetail(result.data!!)
                         disableShimmerEffect()
                     }
                 }
-            }
 
-        })
+            }
+        }
 
         loadMovieDetail()
-
-      /*  vModel.hasInternetConnectionLive.observe(viewLifecycleOwner, {
-            if (hasFailingLoad)
-               loadMovieDetail()
-        })*/
     }
 
-    private fun loadMovieDetail() = vModel.getMovieDetail(navArgs.movieId)
+    private fun setUiWithMovieDetail(movieDetail: MovieDetail) {
+        (requireActivity() as MainActivity).supportActionBar?.title = movieDetail.title
+        movieDetail.images?.let { it -> movieImagesAdapter.submitList(it) }
+        vBinding.tvRelease.text = movieDetail.released.trim()
+        vBinding.tvTime.text = movieDetail.runtime.trim()
+        vBinding.tvImdb.text = movieDetail.imdbRating.trim()
+        vBinding.tvDirector.text = movieDetail.director.trim()
+        vBinding.tvCountry.text = movieDetail.country.trim()
+        vBinding.tvDescription.text =
+            getString(
+                R.string.movie_description,
+                movieDetail.plot.trim(),
+                movieDetail.actors.trim(),
+                movieDetail.writer.trim(),
+                movieDetail.awards.trim()
+            )
+    }
+
+    private fun loadMovieDetail() = vModel.getMovieDetail(navArgs.movieId.toString())
 
     private fun disableShimmerEffect() {
         shimmerViewBinding.root.removeAllViews()
         shimmerViewBinding.root.addView(vBinding.root)
+    }
+
+    private fun showFailingLayout() {
+        shimmerViewBinding.root.removeAllViews()
+        shimmerViewBinding.root.addView(failingViewBinding.root)
     }
 
     private fun setIsFavoredMode(isSelected: Boolean? = null) {
@@ -151,5 +166,6 @@ class DetailFragment : Fragment() {
         super.onDestroyView()
         _shimmerViewBinding = null
         _vBinding = null
+        _failingViewBinding = null
     }
 }

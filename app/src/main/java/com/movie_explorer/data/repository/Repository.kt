@@ -9,6 +9,7 @@ import com.movie_explorer.data.model.Movie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.network.MovieApis
+import com.movie_explorer.utils.coldNetworkBoundResource
 import com.movie_explorer.utils.networkBoundResource
 import com.movie_explorer.wrapper.Resource
 import dagger.hilt.android.scopes.ViewModelScoped
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @ViewModelScoped
+@ExperimentalCoroutinesApi
 class Repository @Inject constructor(
     private val movieApis: MovieApis,
     private val movieDao: MovieDao,
@@ -24,7 +26,7 @@ class Repository @Inject constructor(
     private val movieDetailDao: MovieDetailDao
 ) : RepositoryInterface, BaseRepository() {
 
-    @ExperimentalCoroutinesApi
+
     override suspend fun getReadyMovies(
         query: String?,
         forceRefresh: Boolean
@@ -44,15 +46,29 @@ class Repository @Inject constructor(
         }
     )
 
+    override suspend fun getReadyMovieDetail(movie_id: String):
+            Flow<Resource<MovieDetail>> = coldNetworkBoundResource(
+        query = {
+            getMovieDetail(movie_id)
+        },
+        fetch = { getMovieDetailApi(movie_id) },
+        saveFetchResult = {
+            saveMovieDetail(it)
+        },
+        shouldFetch = {
+            it == null
+        }
+    )
+
     //Api calls
 
     override suspend fun searchMovieApi(query: String?): MovieApiResponse =
         movieApis.searchMovie(query)
 
 
-    override suspend fun getMovieDetailApi(movie_id: String) = safeApiCall {
+    override suspend fun getMovieDetailApi(movie_id: String): MovieDetail =
         movieApis.getMovieDetail(movie_id)
-    }
+
 
 
     /*Database calls*/
@@ -80,7 +96,7 @@ class Repository @Inject constructor(
     override suspend fun saveMovieDetail(movieDetail: MovieDetail) =
         movieDetailDao.insertMovieDetail(movieDetail)
 
-    override suspend fun getMovieDetail(movieDetailId: Int): MovieDetail? =
+    override suspend fun getMovieDetail(movieDetailId: String): MovieDetail =
         movieDetailDao.getMovieDetail(movieDetailId)
 
 }

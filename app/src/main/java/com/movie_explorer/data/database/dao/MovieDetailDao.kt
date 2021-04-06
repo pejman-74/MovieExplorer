@@ -8,9 +8,9 @@ import com.movie_explorer.data.model.MovieDetail
 
 @Dao
 interface MovieDetailDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMovieDetail(movieDetail: MovieDetail)
 
     @Query("SELECT * FROM movieDetail WHERE id=:movieDetailId")
-    suspend fun getMovieDetail(movieDetailId: Int): MovieDetail?
+    suspend fun getMovieDetail(movieDetailId: String): MovieDetail
 }

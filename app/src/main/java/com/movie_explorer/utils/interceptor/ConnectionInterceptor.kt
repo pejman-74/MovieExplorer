@@ -13,7 +13,9 @@ class ConnectionInterceptor(private val connectionObserver: ConnectionObserver) 
             if (connectionObserver.hasInternetConnection())
                 return@runBlocking chain.proceed(chain.request())
             else
-                throw IOException("No internet connection")
+                throw NoInternetException()
         }
     }
 }
+
+class NoInternetException : IOException()
