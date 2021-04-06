@@ -17,14 +17,17 @@ import com.movie_explorer.ui.MainActivity
 import com.movie_explorer.ui.adapters.MovieImageAdapter
 import com.movie_explorer.utils.getCurrentUTCDateTime
 import com.movie_explorer.utils.interceptor.NoInternetException
-import com.movie_explorer.utils.observeOnce
 import com.movie_explorer.utils.showLongToast
 import com.movie_explorer.viewmodel.MainViewModel
 import com.movie_explorer.wrapper.Resource
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class DetailFragment : Fragment() {
 
     private var _shimmerViewBinding: FragmentDetailPlaceHolderBinding? = null
@@ -136,13 +139,14 @@ class DetailFragment : Fragment() {
         inflater.inflate(R.menu.favorite_menu, menu)
         menuItem = menu.findItem(R.id.favoriteMenuItem)
         setIsFavoredMode()
-        vModel.allMovieAndFavoriteMovie.observeOnce(viewLifecycleOwner, {
-            it.forEach { movieAndFavoriteMovie ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            vModel.allMovieAndFavoriteMovie.first().forEach { movieAndFavoriteMovie ->
                 if (movieAndFavoriteMovie.favoriteMovie.movieId == navArgs.movieId) {
                     setIsFavoredMode(true)
                 }
             }
-        })
+        }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

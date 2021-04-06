@@ -6,12 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.movie_explorer.data.model.Movie
 import com.movie_explorer.databinding.FragmentFavoriteBinding
 import com.movie_explorer.ui.adapters.FavoriteMovieAdapter
 import com.movie_explorer.viewmodel.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 
-
+@ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class FavoriteFragment : Fragment() {
 
     private var _vBinding: FragmentFavoriteBinding? = null
@@ -34,18 +39,19 @@ class FavoriteFragment : Fragment() {
         vBinding.rvBookmark.apply {
             adapter = favoriteMovieAdapter
         }
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            vModel.allMovieAndFavoriteMovie.collect {
+                if (it.isEmpty())
+                    vBinding.imBookmark.visibility = View.VISIBLE
 
-        vModel.allMovieAndFavoriteMovie.observe(viewLifecycleOwner, {
-            if (it.isEmpty())
-                vBinding.imBookmark.visibility = View.VISIBLE
-
-            val movies: List<Movie> =
-                it.sortedBy { movieAndFavoriteMovie -> movieAndFavoriteMovie.favoriteMovie.createTime }
-                    .map { movieAndFavoriteMovie ->
-                        movieAndFavoriteMovie.movie
-                    }
-            favoriteMovieAdapter.submitList(movies)
-        })
+                val movies: List<Movie> =
+                    it.sortedBy { movieAndFavoriteMovie -> movieAndFavoriteMovie.favoriteMovie.createTime }
+                        .map { movieAndFavoriteMovie ->
+                            movieAndFavoriteMovie.movie
+                        }
+                favoriteMovieAdapter.submitList(movies)
+            }
+        }
     }
 
     override fun onDestroyView() {

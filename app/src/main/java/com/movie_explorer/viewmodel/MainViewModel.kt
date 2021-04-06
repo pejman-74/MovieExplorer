@@ -1,15 +1,11 @@
 package com.movie_explorer.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.movie_explorer.data.model.FavoriteMovie
-import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.repository.RepositoryInterface
-import com.movie_explorer.utils.Constants.Companion.TAG
 import com.movie_explorer.wrapper.RefreshType
 import com.movie_explorer.wrapper.Resource
-import com.movie_explorer.wrapper.ResourceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
@@ -55,7 +51,7 @@ class MainViewModel @Inject constructor(
     fun deleteFavoriteMovie(movieId: Int) =
         viewModelScope.launch { repository.deleteFavoriteMovie(movieId) }
 
-    val allMovieAndFavoriteMovie = repository.favoriteMovies().asLiveData()
+    val allMovieAndFavoriteMovie = repository.favoriteMovies()
 
 
     private val getMovieDetailTriggerChannel = Channel<String>()
@@ -69,11 +65,4 @@ class MainViewModel @Inject constructor(
     }
 
 
-    private fun cacheMovieDetailResourceResult(movieDetailApiResponse: ResourceResult<MovieDetail>) =
-        viewModelScope.launch {
-            when (movieDetailApiResponse) {
-                is ResourceResult.Success -> repository.saveMovieDetail(movieDetailApiResponse.value)
-                else -> Unit
-            }
-        }
 }
