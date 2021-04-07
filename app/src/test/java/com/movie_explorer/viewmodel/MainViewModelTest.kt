@@ -8,12 +8,13 @@ import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.repositroy.FakeRepository
-import com.movie_explorer.getOrAwaitValue
-import com.movie_explorer.utils.FakeConnectionLive
+import com.movie_explorer.data.repositroy.InternetStatus
 import com.movie_explorer.utils.dummySuccessApiResponse
 import com.movie_explorer.utils.dummySuccessGetMovieDetailApiResponse
-import com.movie_explorer.wrapper.ResourceResult
+import com.movie_explorer.wrapper.RefreshType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -28,7 +29,6 @@ class MainViewModelTest {
     val coroutineScope = MainCoroutineRule()
 
     lateinit var fakeRepository: FakeRepository
-    lateinit var fakeConnectionChecker: FakeConnectionLive
     lateinit var mainViewModel: MainViewModel
 
 
@@ -38,116 +38,139 @@ class MainViewModelTest {
     private val dummyGetMovieDetailApiResponse: MovieDetail =
         Gson().fromJson(dummySuccessGetMovieDetailApiResponse, MovieDetail::class.java)
 
-    private val favoriteMovie = FavoriteMovie(1,"")
+    private val favoriteMovie = FavoriteMovie(1, "")
 
     @Before
     fun setUp() {
         fakeRepository = FakeRepository()
-        fakeConnectionChecker = FakeConnectionLive()
-        mainViewModel = MainViewModel(fakeRepository, fakeConnectionChecker)
+        mainViewModel = MainViewModel(fakeRepository)
     }
 
-
-    @Test
-    fun `search movie with available network, should return data`() {
-        mainViewModel.searchMovie()
-        val movieSearchResponseValue =
-            mainViewModel.movieSearchResponse.getOrAwaitValue() as ResourceResult.Success
-        assertThat(movieSearchResponseValue.value.movies.first())
-            .isEqualTo(dummyMovieApisResponse.movies.first())
+    /*for filling movie cache*/
+    private suspend fun manualFilingMovieCache() {
+        fakeRepository.saveMovie(fakeRepository.searchMovieApi().movies)
     }
 
+    /**
+     * FEED MOVIE TESTS.
+     * */
     @Test
-    fun `search movie with available network, should cache movies in to db`() {
-        mainViewModel.searchMovie()
-        assertThat(mainViewModel.allCacheMovies.getOrAwaitValue()).isEqualTo(
-            dummyMovieApisResponse.movies
-        )
+    fun `force movie feed refresh, should return data`() = runBlockingTest {
+        mainViewModel.refreshMovieFeed(RefreshType.Force)
+        assertThat(mainViewModel.feedMovie.value?.data).isEqualTo(dummyMovieApisResponse.movies)
     }
 
     @Test
-    fun `search movie with NOT available network, should NOT cache movies in to db`() {
-        fakeConnectionChecker.setIsNetworkAvailable(false)
-        mainViewModel.searchMovie()
-        assertThat(mainViewModel.allCacheMovies.getOrAwaitValue()).isEmpty()
+    fun `force movie feed refresh without internet,should return error`() = runBlockingTest {
+        fakeRepository.setInternetStatus(InternetStatus.OFF)
+        mainViewModel.refreshMovieFeed(RefreshType.Force)
+        assertThat(mainViewModel.feedMovie.value?.error).isNotNull()
     }
 
     @Test
-    fun `search movie with NOT available network AND empty cache, should return failure with exception mode is true`() {
-        fakeConnectionChecker.setIsNetworkAvailable(false)
-        mainViewModel.searchMovie()
-        val movieSearchResponseValue =
-            mainViewModel.movieSearchResponse.getOrAwaitValue() as ResourceResult.Failure
-        assertThat(movieSearchResponseValue.isInExceptionMode)
-            .isEqualTo(true)
-    }
-
+    fun `force movie feed refresh without internet and with filled cache,should return data`() =
+        runBlockingTest {
+            manualFilingMovieCache()
+            fakeRepository.setInternetStatus(InternetStatus.OFF)
+            mainViewModel.refreshMovieFeed(RefreshType.Force)
+            assertThat(mainViewModel.feedMovie.value?.data).isEqualTo(dummyMovieApisResponse.movies)
+        }
 
     @Test
-    fun `insert favorite movie,should return in allMovieAndFavoriteMovie`() {
+    fun `normal movie feed refresh with empty cache,should return empty list`() =
+        runBlockingTest {
+            mainViewModel.refreshMovieFeed(RefreshType.Normal)
+            assertThat(mainViewModel.feedMovie.value?.data).isEmpty()
+        }
 
-        //for filling database
-        mainViewModel.searchMovie()
+    @Test
+    fun `normal movie feed refresh with filled cache,should return data`() =
+        runBlockingTest {
+            manualFilingMovieCache()
+            mainViewModel.refreshMovieFeed(RefreshType.Normal)
+            assertThat(mainViewModel.feedMovie.value?.data).isEqualTo(dummyMovieApisResponse.movies)
+        }
 
+    @Test
+    fun `search mode movie feed refresh with query, should all return dates`() = runBlockingTest {
+        mainViewModel.refreshMovieFeed(RefreshType.Search("Shawshank"))
+        assertThat(mainViewModel.feedMovie.value?.data?.get(0)).isEqualTo(dummyMovieApisResponse.movies[0])
+    }
+
+    @Test
+    fun `search mode movie feed refresh with empty query, should all return dates`() =
+        runBlockingTest {
+            mainViewModel.refreshMovieFeed(RefreshType.Search(""))
+            assertThat(mainViewModel.feedMovie.value?.data).isEqualTo(dummyMovieApisResponse.movies)
+        }
+
+    @Test
+    fun `search mode movie feed refresh without internet,should return error`() = runBlockingTest {
+        fakeRepository.setInternetStatus(InternetStatus.OFF)
+        mainViewModel.refreshMovieFeed(RefreshType.Search(""))
+        assertThat(mainViewModel.feedMovie.value?.error).isNotNull()
+    }
+
+    @Test
+    fun `search mode movie feed refresh without internet and with filled cache,should return data`() =
+        runBlockingTest {
+            manualFilingMovieCache()
+            fakeRepository.setInternetStatus(InternetStatus.OFF)
+            mainViewModel.refreshMovieFeed(RefreshType.Search(""))
+            assertThat(mainViewModel.feedMovie.value?.data).isEqualTo(dummyMovieApisResponse.movies)
+        }
+
+
+    /**
+     * MOVIE DETAIL RESPONSE TESTS.
+     * */
+
+    @Test
+    fun `get movie detail response,should return data`() =
+        runBlockingTest {
+            mainViewModel.getMovieDetail("1")
+            println(mainViewModel.movieDetailResponse.first())
+            assertThat(mainViewModel.movieDetailResponse.first()?.data).isEqualTo(
+                dummyGetMovieDetailApiResponse
+            )
+        }
+
+    @Test
+    fun `get movie detail response without internet,should return error`() =
+        runBlockingTest {
+            fakeRepository.setInternetStatus(InternetStatus.OFF)
+            mainViewModel.getMovieDetail("1")
+            println(mainViewModel.movieDetailResponse.first())
+            assertThat(mainViewModel.movieDetailResponse.first()?.error).isNotNull()
+        }
+
+
+    /**
+     * FAVORITE MOVIE TESTS
+     * */
+    @Test
+    fun `insert favorite movie,should return in allMovieAndFavoriteMovie`() = runBlockingTest {
+
+        manualFilingMovieCache()
         mainViewModel.saveFavoriteMovie(favoriteMovie)
 
-        val movieAndFavoriteMovie = mainViewModel.allMovieAndFavoriteMovie.getOrAwaitValue().first()
+        val movieAndFavoriteMovie = mainViewModel.allMovieAndFavoriteMovie.first().first()
 
         assertThat(movieAndFavoriteMovie.movie).isEqualTo(dummyMovieApisResponse.movies.first())
         assertThat(movieAndFavoriteMovie.favoriteMovie).isEqualTo(favoriteMovie)
     }
 
     @Test
-    fun `delete favorite movie,should not be exist inside allMovieAndFavoriteMovie`() {
+    fun `delete favorite movie,should not be exist inside allMovieAndFavoriteMovie`() =
+        runBlockingTest {
 
-        //for filling database
-        mainViewModel.searchMovie()
+            manualFilingMovieCache()
+            mainViewModel.saveFavoriteMovie(favoriteMovie)
 
-        mainViewModel.saveFavoriteMovie(favoriteMovie)
+            mainViewModel.deleteFavoriteMovie(favoriteMovie.movieId)
 
-        val allMovieAndFavoriteMovie = mainViewModel.allMovieAndFavoriteMovie
+            assertThat(mainViewModel.allMovieAndFavoriteMovie.first()).isEmpty()
 
-        val movieAndFavoriteMovie =allMovieAndFavoriteMovie.getOrAwaitValue().first()
+        }
 
-        assertThat(movieAndFavoriteMovie.movie).isEqualTo(dummyMovieApisResponse.movies.first())
-        assertThat(movieAndFavoriteMovie.favoriteMovie).isEqualTo(favoriteMovie)
-
-        mainViewModel.deleteFavoriteMovie(favoriteMovie.movieId)
-
-
-        assertThat(allMovieAndFavoriteMovie.getOrAwaitValue()).isEmpty()
-
-
-    }
-
-    @Test
-    fun `get movie detail with available network, should return from api`() {
-        mainViewModel.getMovieDetail(1)
-        val movieDetailResponse =
-            mainViewModel.movieDetailResponse.getOrAwaitValue() as ResourceResult.Success
-        assertThat(movieDetailResponse.value).isEqualTo(dummyGetMovieDetailApiResponse)
-    }
-
-    @Test
-    fun `get movie detail with NOT available network, should return from db`() {
-        //call for cache into db
-        mainViewModel.getMovieDetail(1)
-        //turn off the connection
-        fakeConnectionChecker.setIsNetworkAvailable(false)
-
-        mainViewModel.getMovieDetail(1)
-        val movieDetailResponse =
-            mainViewModel.movieDetailResponse.getOrAwaitValue() as ResourceResult.Success
-        assertThat(movieDetailResponse.value).isEqualTo(dummyGetMovieDetailApiResponse)
-    }
-
-    @Test
-    fun `get movie detail with NOT available network and NOT available in db, should return Null`() {
-        //turn off the connection
-        fakeConnectionChecker.setIsNetworkAvailable(false)
-
-        mainViewModel.getMovieDetail(1)
-        val movieDetailResponse =
-            mainViewModel.movieDetailResponse.getOrAwaitValue() as ResourceResult.Success
-        assertThat(movieDetailResponse.value).isNull()
-    }}
+}

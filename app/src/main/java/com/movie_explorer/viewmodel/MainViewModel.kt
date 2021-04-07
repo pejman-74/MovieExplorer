@@ -56,9 +56,10 @@ class MainViewModel @Inject constructor(
 
     private val getMovieDetailTriggerChannel = Channel<String>()
     private val getMovieDetailTrigger = getMovieDetailTriggerChannel.receiveAsFlow()
+
     val movieDetailResponse = getMovieDetailTrigger.flatMapLatest { movieId ->
         repository.getReadyMovieDetail(movieId)
-    }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     fun getMovieDetail(movie_id: String) = viewModelScope.launch {
         getMovieDetailTriggerChannel.send(movie_id)

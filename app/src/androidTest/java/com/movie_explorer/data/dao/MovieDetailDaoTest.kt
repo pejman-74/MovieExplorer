@@ -51,7 +51,7 @@ class MovieDetailDaoTest {
     @Test
     fun test_Insert() = runBlockingTest {
         movieDetailDao.insertMovieDetail(dummyMovieDetailApiResponse)
-        assertThat(movieDetailDao.getMovieDetail(1)).isEqualTo(dummyMovieDetailApiResponse)
+        assertThat(movieDetailDao.getMovieDetail("1")).isEqualTo(dummyMovieDetailApiResponse)
     }
 
 }

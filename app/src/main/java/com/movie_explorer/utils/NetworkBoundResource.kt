@@ -11,7 +11,7 @@ inline fun <ResultType> networkBoundResource(
 ) = flow<Resource<ResultType>> {
     val data = query()
 
-    if (shouldFetch(data)) {
+    if (shouldFetch(data) || data == null) {
 
         emit(Resource.Loading(data))
 
@@ -24,9 +24,6 @@ inline fun <ResultType> networkBoundResource(
         }
 
     } else {
-        if (data == null)
-            emit(Resource.Error(NoSuchElementException("Cant't load data")))
-        else
-            emit(Resource.Success(data))
+        emit(Resource.Success(data))
     }
 }
