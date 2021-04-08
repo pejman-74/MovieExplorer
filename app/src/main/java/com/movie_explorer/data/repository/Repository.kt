@@ -17,13 +17,12 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @ViewModelScoped
-@ExperimentalCoroutinesApi
 class Repository @Inject constructor(
     private val movieApis: MovieApis,
     private val movieDao: MovieDao,
     private val favoriteMovieDao: FavoriteMovieDao,
     private val movieDetailDao: MovieDetailDao
-) : RepositoryInterface, BaseRepository() {
+) : RepositoryInterface {
 
 
     override suspend fun getReadyMovies(

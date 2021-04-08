@@ -60,6 +60,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
                     result.error != null && result.data.isNullOrEmpty()
 
                 movieAdapter.submitList(result.data) {
+                    //scroll if user searched
                     if (lastQuery != null)
                         scrollTop()
                 }
@@ -79,7 +80,8 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
 
     override fun onStart() {
         super.onStart()
-        vModel.refreshMovieFeed(RefreshType.Force)
+        if (vModel.feedMovie.value == null)
+            vModel.refreshMovieFeed(RefreshType.Force)
     }
 
     //Scroll to top if user searching
@@ -111,6 +113,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
     }
 
     override fun onClose(): Boolean {
+        lastQuery = null
         vModel.refreshMovieFeed(RefreshType.Normal)
         return false
     }

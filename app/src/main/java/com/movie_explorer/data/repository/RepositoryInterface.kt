@@ -6,7 +6,6 @@ import com.movie_explorer.data.model.Movie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.wrapper.Resource
-import com.movie_explorer.wrapper.ResourceResult
 import kotlinx.coroutines.flow.Flow
 
 interface RepositoryInterface {
