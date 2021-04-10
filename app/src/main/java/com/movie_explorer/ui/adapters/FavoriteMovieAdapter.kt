@@ -15,11 +15,13 @@ import com.movie_explorer.ui.fragments.FavoriteFragmentDirections
 import com.movie_explorer.ui.holders.MovieViewHolder
 import com.movie_explorer.utils.doubleButtonAlertDialog
 import com.movie_explorer.viewmodel.MainViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 class FavoriteMovieAdapter(
     private val requireActivity: FragmentActivity,
     private val mainViewModel: MainViewModel
-) : ListAdapter<Movie,MovieViewHolder>(GenericDiffUtil()), ActionMode.Callback {
+) : ListAdapter<Movie,MovieViewHolder>(MovieDiffUtil()), ActionMode.Callback {
 
     private var actionMode: ActionMode? = null
 

@@ -7,7 +7,7 @@ import com.movie_explorer.data.model.Movie
 import com.movie_explorer.ui.fragments.MovieFragmentDirections
 import com.movie_explorer.ui.holders.MovieViewHolder
 
-class MovieAdapter : ListAdapter<Movie,MovieViewHolder>(GenericDiffUtil()) {
+class MovieAdapter : ListAdapter<Movie,MovieViewHolder>(MovieDiffUtil()) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
