@@ -1,22 +1,20 @@
-package com.movie_explorer.data.repositroy
+package com.movie_explorer.data.repository
 
 import com.google.gson.Gson
 import com.movie_explorer.data.database.MovieAndFavoriteMovie
 import com.movie_explorer.data.model.*
-import com.movie_explorer.data.repository.RepositoryInterface
 import com.movie_explorer.utils.dummySuccessApiResponse
 import com.movie_explorer.utils.dummySuccessGetMovieDetailApiResponse
 import com.movie_explorer.utils.interceptor.NoInternetException
 import com.movie_explorer.utils.networkBoundResource
 import com.movie_explorer.wrapper.Resource
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import javax.inject.Inject
 
 enum class InternetStatus { ON, OFF }
 
-@ExperimentalCoroutinesApi
-class FakeRepository : RepositoryInterface {
+class FakeRepository  : RepositoryInterface {
     private val dummyMovieApisResponse: MovieApiResponse =
         Gson().fromJson(dummySuccessApiResponse, MovieApiResponse::class.java)
 

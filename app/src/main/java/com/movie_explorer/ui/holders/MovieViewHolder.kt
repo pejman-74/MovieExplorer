@@ -7,7 +7,7 @@ import coil.load
 import com.movie_explorer.R
 import com.movie_explorer.data.model.Movie
 import com.movie_explorer.databinding.MovieItemBinding
-import com.movie_explorer.utils.toGenresStyleText
+import com.movie_explorer.utils.Utils.toGenresStyleText
 
 class MovieViewHolder(private val movieItemBinding: MovieItemBinding) :
     RecyclerView.ViewHolder(movieItemBinding.root) {

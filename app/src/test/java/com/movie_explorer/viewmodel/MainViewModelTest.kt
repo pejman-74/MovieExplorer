@@ -7,8 +7,8 @@ import com.movie_explorer.MainCoroutineRule
 import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.model.MovieDetail
-import com.movie_explorer.data.repositroy.FakeRepository
-import com.movie_explorer.data.repositroy.InternetStatus
+import com.movie_explorer.data.repository.FakeRepository
+import com.movie_explorer.data.repository.InternetStatus
 import com.movie_explorer.utils.dummySuccessApiResponse
 import com.movie_explorer.utils.dummySuccessGetMovieDetailApiResponse
 import com.movie_explorer.wrapper.RefreshType

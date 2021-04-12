@@ -15,9 +15,9 @@ import com.movie_explorer.databinding.FragmentDetailBinding
 import com.movie_explorer.databinding.FragmentDetailPlaceHolderBinding
 import com.movie_explorer.ui.MainActivity
 import com.movie_explorer.ui.adapters.MovieImageAdapter
-import com.movie_explorer.utils.getCurrentUTCDateTime
+import com.movie_explorer.utils.Utils.getCurrentUTCDateTime
+import com.movie_explorer.utils.Utils.showLongToast
 import com.movie_explorer.utils.interceptor.NoInternetException
-import com.movie_explorer.utils.showLongToast
 import com.movie_explorer.viewmodel.MainViewModel
 import com.movie_explorer.wrapper.Resource
 import dagger.hilt.android.AndroidEntryPoint

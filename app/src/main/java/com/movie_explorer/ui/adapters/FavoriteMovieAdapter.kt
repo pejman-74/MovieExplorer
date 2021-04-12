@@ -13,7 +13,7 @@ import com.movie_explorer.R
 import com.movie_explorer.data.model.Movie
 import com.movie_explorer.ui.fragments.FavoriteFragmentDirections
 import com.movie_explorer.ui.holders.MovieViewHolder
-import com.movie_explorer.utils.doubleButtonAlertDialog
+import com.movie_explorer.utils.Utils.doubleButtonAlertDialog
 import com.movie_explorer.viewmodel.MainViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 

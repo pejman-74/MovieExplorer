@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @ViewModelScoped
-class Repository @Inject constructor(
+class Repository constructor(
     private val movieApis: MovieApis,
     private val movieDao: MovieDao,
     private val favoriteMovieDao: FavoriteMovieDao,

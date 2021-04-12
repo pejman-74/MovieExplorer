@@ -8,7 +8,7 @@ import com.movie_explorer.data.database.MovieDataBase
 import com.movie_explorer.data.database.dao.MovieDetailDao
 import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.di.TestDBQualifier
-import com.movie_explorer.utils.androidDummySuccessGetMovieDetailApiResponse
+import com.movie_explorer.utils.dummySuccessGetMovieDetailApiResponse
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,7 +35,7 @@ class MovieDetailDaoTest {
     lateinit var movieDetailDao: MovieDetailDao
 
     private val dummyMovieDetailApiResponse: MovieDetail =
-        Gson().fromJson(androidDummySuccessGetMovieDetailApiResponse, MovieDetail::class.java)
+        Gson().fromJson(dummySuccessGetMovieDetailApiResponse, MovieDetail::class.java)
 
     @Before
     fun setUp() {

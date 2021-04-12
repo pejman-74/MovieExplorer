@@ -1,12 +1,7 @@
 package com.movie_explorer.di
 
 import android.content.Context
-import com.movie_explorer.data.database.dao.FavoriteMovieDao
-import com.movie_explorer.data.database.dao.MovieDao
-import com.movie_explorer.data.database.dao.MovieDetailDao
 import com.movie_explorer.data.network.MovieApis
-import com.movie_explorer.data.repository.Repository
-import com.movie_explorer.data.repository.RepositoryInterface
 import com.movie_explorer.utils.Constants
 import com.movie_explorer.utils.interceptor.ConnectionInterceptor
 import com.movie_explorer.utils.network.ConnectionObserver
@@ -60,14 +55,5 @@ object NetworkModule {
     @Singleton
     fun provideMovieApis(retrofit: Retrofit): MovieApis = retrofit.create(MovieApis::class.java)
 
-
-    @Provides
-    @Singleton
-    fun provideRepository(
-        movieApis: MovieApis,
-        movieDao: MovieDao,
-        favoriteMovieDao: FavoriteMovieDao,
-        movieDetailDao: MovieDetailDao
-    ): RepositoryInterface = Repository(movieApis, movieDao, favoriteMovieDao, movieDetailDao)
 
 }
