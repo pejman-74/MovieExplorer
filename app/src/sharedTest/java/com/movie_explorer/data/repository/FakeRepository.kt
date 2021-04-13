@@ -11,7 +11,6 @@ import com.movie_explorer.wrapper.Resource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.lang.Thread.sleep
 
 enum class InternetStatus { ON, OFF }
 

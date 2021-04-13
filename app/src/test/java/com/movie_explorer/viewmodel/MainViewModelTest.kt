@@ -2,15 +2,12 @@ package com.movie_explorer.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.Gson
 import com.movie_explorer.MainCoroutineRule
 import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.repository.FakeRepository
 import com.movie_explorer.data.repository.InternetStatus
-import com.movie_explorer.utils.dummySuccessApiResponse
-import com.movie_explorer.utils.dummySuccessGetMovieDetailApiResponse
 import com.movie_explorer.wrapper.RefreshType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -33,10 +30,10 @@ class MainViewModelTest {
 
 
     private val dummyMovieApisResponse: MovieApiResponse =
-        Gson().fromJson(dummySuccessApiResponse, MovieApiResponse::class.java)
+        fakeRepository.dummyMovieApisResponse
 
     private val dummyGetMovieDetailApiResponse: MovieDetail =
-        Gson().fromJson(dummySuccessGetMovieDetailApiResponse, MovieDetail::class.java)
+        fakeRepository.dummyGetMovieDetailApiResponse
 
     private val favoriteMovie = FavoriteMovie(1, "")
 
