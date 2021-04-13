@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.movie_explorer">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.movie_explorer">
 
     <application>
-        <activity android:name=".HiltTestActivity" android:exported="false"/>
+        <activity
+            android:name=".HiltTestActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MovieExplorer" />
     </application>
 
 </manifest>

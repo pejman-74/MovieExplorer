@@ -49,13 +49,13 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener, SearchView.OnC
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             vModel.feedMovie.collect {
-                val result = if (it == null) {
+                val result = it ?: return@collect
+
+                if (result.error == null && result.data.isNullOrEmpty())
                     vBinding.rvMovies.showShimmer()
-                    return@collect
-                } else {
+                else
                     vBinding.rvMovies.hideShimmer()
-                    it
-                }
+
                 vBinding.failingView.root.isVisible =
                     result.error != null && result.data.isNullOrEmpty()
 

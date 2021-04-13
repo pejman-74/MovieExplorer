@@ -8,17 +8,18 @@ import com.movie_explorer.utils.dummySuccessGetMovieDetailApiResponse
 import com.movie_explorer.utils.interceptor.NoInternetException
 import com.movie_explorer.utils.networkBoundResource
 import com.movie_explorer.wrapper.Resource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import javax.inject.Inject
+import java.lang.Thread.sleep
 
 enum class InternetStatus { ON, OFF }
 
 class FakeRepository  : RepositoryInterface {
-    private val dummyMovieApisResponse: MovieApiResponse =
+    val dummyMovieApisResponse: MovieApiResponse =
         Gson().fromJson(dummySuccessApiResponse, MovieApiResponse::class.java)
 
-    private val dummyGetMovieDetailApiResponse: MovieDetail =
+    val dummyGetMovieDetailApiResponse: MovieDetail =
         Gson().fromJson(dummySuccessGetMovieDetailApiResponse, MovieDetail::class.java)
 
     private val movieDataBase = MutableStateFlow<List<Movie>>(emptyList())
@@ -29,11 +30,15 @@ class FakeRepository  : RepositoryInterface {
 
     private var internetStatus = InternetStatus.ON
 
+    private var latancy = 0L
 
     fun setInternetStatus(internetStatus: InternetStatus) {
         this.internetStatus = internetStatus
     }
 
+    fun setInternetLatency(time: Long) {
+        latancy = time
+    }
 
     override suspend fun getReadyMovies(query: String?, forceRefresh: Boolean):
             Flow<Resource<List<Movie>>> = networkBoundResource(
@@ -70,9 +75,11 @@ class FakeRepository  : RepositoryInterface {
         return when {
             internetStatus == InternetStatus.OFF -> throw NoInternetException()
             query.isNullOrEmpty() -> {
+                delay(latancy)
                 dummyMovieApisResponse
             }
             else -> {
+                delay(latancy)
                 val matchMovies = dummyMovieApisResponse.movies.filter { it.title.contains(query) }
                 val metadata = Metadata("1", 1, 10, matchMovies.size)
                 MovieApiResponse(matchMovies, metadata)
@@ -82,7 +89,10 @@ class FakeRepository  : RepositoryInterface {
 
     override suspend fun getMovieDetailApi(movie_id: String): MovieDetail = when (internetStatus) {
         InternetStatus.OFF -> throw NoInternetException()
-        else -> dummyGetMovieDetailApiResponse
+        else -> {
+            delay(latancy)
+            dummyGetMovieDetailApiResponse
+        }
     }
 
     override suspend fun saveMovie(movies: List<Movie>) {
