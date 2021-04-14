@@ -7,7 +7,7 @@ import com.movie_explorer.utils.dummySuccessApiResponse
 import com.movie_explorer.utils.dummySuccessGetMovieDetailApiResponse
 import com.movie_explorer.utils.interceptor.NoInternetException
 import com.movie_explorer.utils.networkBoundResource
-import com.movie_explorer.utils.wrapEspressoIdlingResource
+import com.movie_explorer.wrapEspressoIdlingResource
 import com.movie_explorer.wrapper.Resource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

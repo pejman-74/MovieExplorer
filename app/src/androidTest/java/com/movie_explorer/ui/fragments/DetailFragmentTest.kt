@@ -8,13 +8,13 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
+import com.movie_explorer.EspressoIdlingResource
 import com.movie_explorer.R
 import com.movie_explorer.data.repository.FakeRepository
 import com.movie_explorer.data.repository.InternetStatus
 import com.movie_explorer.data.repository.RepositoryInterface
 import com.movie_explorer.di.RepositoryModule
 import com.movie_explorer.launchFragmentInHiltContainer
-import com.movie_explorer.utils.EspressoIdlingResource
 import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
