@@ -7,6 +7,7 @@ import com.movie_explorer.utils.dummySuccessApiResponse
 import com.movie_explorer.utils.dummySuccessGetMovieDetailApiResponse
 import com.movie_explorer.utils.interceptor.NoInternetException
 import com.movie_explorer.utils.networkBoundResource
+import com.movie_explorer.utils.wrapEspressoIdlingResource
 import com.movie_explorer.wrapper.Resource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -73,26 +74,31 @@ class FakeRepository  : RepositoryInterface {
     override suspend fun searchMovieApi(query: String?): MovieApiResponse {
         return when {
             internetStatus == InternetStatus.OFF -> throw NoInternetException()
-            query.isNullOrEmpty() -> {
+            query.isNullOrEmpty() -> wrapEspressoIdlingResource {
                 delay(latancy)
                 dummyMovieApisResponse
             }
-            else -> {
+            else -> wrapEspressoIdlingResource {
                 delay(latancy)
-                val matchMovies = dummyMovieApisResponse.movies.filter { it.title.contains(query) }
+                val matchMovies =
+                    dummyMovieApisResponse.movies.filter { it.title.contains(query) }
                 val metadata = Metadata("1", 1, 10, matchMovies.size)
                 MovieApiResponse(matchMovies, metadata)
             }
+
         }
     }
 
-    override suspend fun getMovieDetailApi(movie_id: String): MovieDetail = when (internetStatus) {
-        InternetStatus.OFF -> throw NoInternetException()
-        else -> {
-            delay(latancy)
-            dummyGetMovieDetailApiResponse
+    override suspend fun getMovieDetailApi(movie_id: String): MovieDetail =
+
+        when (internetStatus) {
+            InternetStatus.OFF -> throw NoInternetException()
+            else -> wrapEspressoIdlingResource {
+                delay(latancy)
+                dummyGetMovieDetailApiResponse
+            }
         }
-    }
+
 
     override suspend fun saveMovie(movies: List<Movie>) {
         movieDataBase.emit(movieDataBase.value.plus(movies))
