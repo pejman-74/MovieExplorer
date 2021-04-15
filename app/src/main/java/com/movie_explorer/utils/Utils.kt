@@ -2,16 +2,16 @@ package com.movie_explorer.utils
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.movie_explorer.R
 import java.text.SimpleDateFormat
 import java.util.*
+
 object Utils {
     fun List<String>.toGenresStyleText(): String {
         var genres = ""
@@ -75,4 +75,13 @@ object Utils {
 
     fun getCurrentUTCDateTime() = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US)
         .apply { timeZone = TimeZone.getTimeZone("UTC") }.format(Date()) + "Z"
+
+    fun View.showSnackBar(
+        message: String,
+        duration: Int = Snackbar.LENGTH_LONG,
+        actionTitle: String? = null,
+        action: View.OnClickListener? = null
+    ) = Snackbar.make(this, message, duration).setAction(actionTitle, action).show()
+
+
 }

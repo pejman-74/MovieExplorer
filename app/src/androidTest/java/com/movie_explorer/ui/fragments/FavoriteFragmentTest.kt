@@ -5,12 +5,15 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.longClick
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.filters.MediumTest
+import com.google.common.truth.Truth.assertThat
 import com.movie_explorer.R
 import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.repository.FakeRepository
@@ -22,6 +25,7 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import org.hamcrest.Matchers.not
 import org.junit.Before
@@ -46,6 +50,7 @@ class FavoriteFragmentTest {
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private val firstMovie = fakeRepository.dummyMovieApisResponse.movies[0]
+
 
     @Before
     fun setUp() {
@@ -122,5 +127,42 @@ class FavoriteFragmentTest {
         onView(ViewMatchers.withSubstring(firstMovie.title)).perform(click())
 
         verify(navController).navigate(DetailFragmentDirections.toDetailFragment(1))
+    }
+
+    @Test
+    fun testSwipeItem_ItemDelete() = runBlockingTest {
+
+        setMovieAndFavoriteMovie()
+
+        launchFragmentInHiltContainer<FavoriteFragment>()
+
+        assertThat(fakeRepository.favoriteMovies().first().size).isEqualTo(1)
+
+        onView(ViewMatchers.withText(firstMovie.title)).perform(swipeLeft())
+
+        assertThat(fakeRepository.favoriteMovies().first().size).isEqualTo(0)
+
+    }
+
+    @Test
+    fun testSwipeItem_ItemUndo() = runBlockingTest {
+
+        setMovieAndFavoriteMovie()
+
+        launchFragmentInHiltContainer<FavoriteFragment>()
+
+        assertThat(fakeRepository.favoriteMovies().first().size).isEqualTo(1)
+
+        onView(withText(firstMovie.title)).perform(swipeLeft())
+
+        assertThat(fakeRepository.favoriteMovies().first().size).isEqualTo(0)
+
+        //check snack bar
+        onView(withText(context.getString(R.string.deleted))).check(matches(isDisplayed()))
+
+        //click snack bar undo button
+        onView(withText(context.getString(R.string.undo))).perform(click())
+
+        assertThat(fakeRepository.favoriteMovies().first().size).isEqualTo(1)
     }
 }

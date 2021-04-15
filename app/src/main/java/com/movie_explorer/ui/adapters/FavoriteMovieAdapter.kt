@@ -10,7 +10,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import com.google.android.material.card.MaterialCardView
 import com.movie_explorer.R
-import com.movie_explorer.data.model.Movie
+import com.movie_explorer.data.database.MovieAndFavoriteMovie
 import com.movie_explorer.ui.fragments.FavoriteFragmentDirections
 import com.movie_explorer.ui.holders.MovieViewHolder
 import com.movie_explorer.utils.Utils.doubleButtonAlertDialog
@@ -21,7 +21,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 class FavoriteMovieAdapter(
     private val requireActivity: FragmentActivity,
     private val mainViewModel: MainViewModel
-) : ListAdapter<Movie,MovieViewHolder>(MovieDiffUtil()), ActionMode.Callback {
+) : ListAdapter<MovieAndFavoriteMovie, MovieViewHolder>(MovieAndFavoriteMovieDiffUtil()),
+    ActionMode.Callback {
 
     private var actionMode: ActionMode? = null
 
@@ -34,12 +35,12 @@ class FavoriteMovieAdapter(
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        val movie = getItem(position)
-        holder.bind(movie)
+        val movieAndFavoriteMovie = getItem(position)
+        holder.bind(movieAndFavoriteMovie.movie)
         holder.itemView.setOnLongClickListener {
             if (actionMode == null) {
                 requireActivity.startActionMode(this)
-                setSelectItem(holder, movie.id)
+                setSelectItem(holder, movieAndFavoriteMovie.movie.id)
             }
             true
         }
@@ -47,12 +48,12 @@ class FavoriteMovieAdapter(
             //check in selecting mode
             if (actionMode == null) {
                 it.findNavController()
-                    .navigate(FavoriteFragmentDirections.toDetailFragment(movie.id))
+                    .navigate(FavoriteFragmentDirections.toDetailFragment(movieAndFavoriteMovie.movie.id))
             } else {
-                if (movie.id in selectedMoviesId)
-                    setDeselectItem(holder, movie.id)
+                if (movieAndFavoriteMovie.movie.id in selectedMoviesId)
+                    setDeselectItem(holder, movieAndFavoriteMovie.movie.id)
                 else
-                    setSelectItem(holder, movie.id)
+                    setSelectItem(holder, movieAndFavoriteMovie.movie.id)
             }
         }
     }
