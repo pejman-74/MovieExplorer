@@ -16,10 +16,11 @@ import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import com.movie_explorer.R
 import com.movie_explorer.data.model.FavoriteMovie
-import com.movie_explorer.data.repository.FakeRepository
+import com.movie_explorer.data.repository.AndroidFakeRepository
 import com.movie_explorer.data.repository.RepositoryInterface
 import com.movie_explorer.di.RepositoryModule
 import com.movie_explorer.launchFragmentInHiltContainer
+import com.movie_explorer.utils.dummyMovieApisResponse
 import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -45,11 +46,11 @@ class FavoriteFragmentTest {
 
     @BindValue
     @JvmField
-    val repository: RepositoryInterface = FakeRepository()
-    private val fakeRepository: FakeRepository get() = repository as FakeRepository
+    val repository: RepositoryInterface = AndroidFakeRepository()
+    private val androidFakeRepository: AndroidFakeRepository get() = repository as AndroidFakeRepository
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
-    private val firstMovie = fakeRepository.dummyMovieApisResponse.movies[0]
+    private val firstMovie = dummyMovieApisResponse.movies[0]
 
 
     @Before
@@ -59,8 +60,8 @@ class FavoriteFragmentTest {
 
     //fill movie db and insert one favoriteMovie
     private fun setMovieAndFavoriteMovie() = runBlockingTest {
-        fakeRepository.saveMovie(fakeRepository.searchMovieApi().movies)
-        fakeRepository.saveFavoriteMovie(FavoriteMovie(1, ""))
+        androidFakeRepository.saveMovie(androidFakeRepository.searchMovieApi().movies)
+        androidFakeRepository.saveFavoriteMovie(FavoriteMovie(1, ""))
     }
 
     @Test
@@ -136,11 +137,11 @@ class FavoriteFragmentTest {
 
         launchFragmentInHiltContainer<FavoriteFragment>()
 
-        assertThat(fakeRepository.favoriteMovies().first().size).isEqualTo(1)
+        assertThat(androidFakeRepository.favoriteMovies().first().size).isEqualTo(1)
 
         onView(ViewMatchers.withText(firstMovie.title)).perform(swipeLeft())
 
-        assertThat(fakeRepository.favoriteMovies().first().size).isEqualTo(0)
+        assertThat(androidFakeRepository.favoriteMovies().first().size).isEqualTo(0)
 
     }
 
@@ -151,11 +152,11 @@ class FavoriteFragmentTest {
 
         launchFragmentInHiltContainer<FavoriteFragment>()
 
-        assertThat(fakeRepository.favoriteMovies().first().size).isEqualTo(1)
+        assertThat(androidFakeRepository.favoriteMovies().first().size).isEqualTo(1)
 
         onView(withText(firstMovie.title)).perform(swipeLeft())
 
-        assertThat(fakeRepository.favoriteMovies().first().size).isEqualTo(0)
+        assertThat(androidFakeRepository.favoriteMovies().first().size).isEqualTo(0)
 
         //check snack bar
         onView(withText(context.getString(R.string.deleted))).check(matches(isDisplayed()))
@@ -163,6 +164,6 @@ class FavoriteFragmentTest {
         //click snack bar undo button
         onView(withText(context.getString(R.string.undo))).perform(click())
 
-        assertThat(fakeRepository.favoriteMovies().first().size).isEqualTo(1)
+        assertThat(androidFakeRepository.favoriteMovies().first().size).isEqualTo(1)
     }
 }

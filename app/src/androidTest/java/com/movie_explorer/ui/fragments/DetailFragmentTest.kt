@@ -10,11 +10,12 @@ import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import com.movie_explorer.EspressoIdlingResource
 import com.movie_explorer.R
-import com.movie_explorer.data.repository.FakeRepository
-import com.movie_explorer.data.repository.InternetStatus
+import com.movie_explorer.data.repository.AndroidFakeRepository
 import com.movie_explorer.data.repository.RepositoryInterface
 import com.movie_explorer.di.RepositoryModule
 import com.movie_explorer.launchFragmentInHiltContainer
+import com.movie_explorer.utils.InternetStatus
+import com.movie_explorer.utils.dummyGetMovieDetailApiResponse
 import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -39,11 +40,11 @@ class DetailFragmentTest {
     val hiltRule = HiltAndroidRule(this)
 
     @BindValue
-    val repository: RepositoryInterface = FakeRepository()
+    val repository: RepositoryInterface = AndroidFakeRepository()
 
-    private val fakeRepository: FakeRepository get() = repository as FakeRepository
+    private val androidFakeRepository: AndroidFakeRepository get() = repository as AndroidFakeRepository
 
-    private val firstMovieDetail = fakeRepository.dummyGetMovieDetailApiResponse
+    private val firstMovieDetail = dummyGetMovieDetailApiResponse
 
     @Before
     fun setUp() {
@@ -58,7 +59,7 @@ class DetailFragmentTest {
 
     @Test
     fun displayMovieDetail_WhenIntentIsOFF() {
-        fakeRepository.setInternetStatus(InternetStatus.OFF)
+        androidFakeRepository.setInternetStatus(InternetStatus.OFF)
         launchFragmentInHiltContainer<DetailFragment>(
             bundleOf("movieId" to firstMovieDetail.id)
         )
@@ -68,7 +69,7 @@ class DetailFragmentTest {
     @Test
     fun displayMovieDetail_WhenIntentHasLatency() {
 
-        fakeRepository.setInternetLatency(1000)
+        androidFakeRepository.setInternetLatency(1000)
 
         launchFragmentInHiltContainer<DetailFragment>(
             bundleOf("movieId" to firstMovieDetail.id)
@@ -85,7 +86,7 @@ class DetailFragmentTest {
     @Test
     fun makeMovieFavorite() = runBlockingTest {
         //save movies to db (for making relation in db)
-        fakeRepository.saveMovie(fakeRepository.searchMovieApi().movies)
+        androidFakeRepository.saveMovie(androidFakeRepository.searchMovieApi().movies)
 
         launchFragmentInHiltContainer<DetailFragment>(
             bundleOf("movieId" to firstMovieDetail.id)
@@ -94,7 +95,7 @@ class DetailFragmentTest {
         onView(withId(R.id.favoriteMenuItem)).perform(click())
 
         //check added to favorite movies in repository
-        assertThat(fakeRepository.favoriteMovies().first().size).isEqualTo(1)
+        assertThat(androidFakeRepository.favoriteMovies().first().size).isEqualTo(1)
 
     }
 }

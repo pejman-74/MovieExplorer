@@ -1,5 +1,9 @@
 package com.movie_explorer.utils
 
+import com.google.gson.Gson
+import com.movie_explorer.data.model.MovieApiResponse
+import com.movie_explorer.data.model.MovieDetail
+
 
 const val dummySuccessApiResponse = "{\n" +
         "  \"data\": [\n" +
@@ -212,3 +216,9 @@ const val dummySuccessGetMovieDetailApiResponse ="{\n" +
         "    \"http://moviesapi.ir/images/tt0111161_screenshot3.jpg\"\n" +
         "  ]\n" +
         "}"
+
+val dummyMovieApisResponse: MovieApiResponse =
+    Gson().fromJson(dummySuccessApiResponse, MovieApiResponse::class.java)
+
+val dummyGetMovieDetailApiResponse: MovieDetail =
+    Gson().fromJson(dummySuccessGetMovieDetailApiResponse, MovieDetail::class.java)

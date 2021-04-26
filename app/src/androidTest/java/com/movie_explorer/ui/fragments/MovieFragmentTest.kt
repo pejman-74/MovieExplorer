@@ -12,11 +12,12 @@ import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import com.movie_explorer.EspressoIdlingResource
 import com.movie_explorer.R
-import com.movie_explorer.data.repository.FakeRepository
-import com.movie_explorer.data.repository.InternetStatus
+import com.movie_explorer.data.repository.AndroidFakeRepository
 import com.movie_explorer.data.repository.RepositoryInterface
 import com.movie_explorer.di.RepositoryModule
 import com.movie_explorer.launchFragmentInHiltContainer
+import com.movie_explorer.utils.InternetStatus
+import com.movie_explorer.utils.dummyMovieApisResponse
 import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -42,10 +43,10 @@ class MovieFragmentTest {
 
     @BindValue
     @JvmField
-    val repository: RepositoryInterface = FakeRepository()
-    private val fakeRepository: FakeRepository get() = repository as FakeRepository
+    val repository: RepositoryInterface = AndroidFakeRepository()
+    private val androidFakeRepository: AndroidFakeRepository get() = repository as AndroidFakeRepository
 
-    private val firstMovie = fakeRepository.dummyMovieApisResponse.movies[0]
+    private val firstMovie = dummyMovieApisResponse.movies[0]
 
     @Before
     fun setUp() {
@@ -62,7 +63,7 @@ class MovieFragmentTest {
     @Test
     fun displayMovies_whenInternetHasLatency() {
 
-        fakeRepository.setInternetLatency(1000)
+        androidFakeRepository.setInternetLatency(1000)
 
         launchFragmentInHiltContainer<MovieFragment> {
             //check shimmer is showing
@@ -77,7 +78,7 @@ class MovieFragmentTest {
 
     @Test
     fun displayFailingView_whenInternetIsOFF() {
-        fakeRepository.setInternetStatus(InternetStatus.OFF)
+        androidFakeRepository.setInternetStatus(InternetStatus.OFF)
         launchFragmentInHiltContainer<MovieFragment>()
         onView(ViewMatchers.withId(R.id.failing_view))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
@@ -85,12 +86,12 @@ class MovieFragmentTest {
 
     @Test
     fun clickRetryButtonInFailingView_whenInternetBackToON() {
-        fakeRepository.setInternetStatus(InternetStatus.OFF)
+        androidFakeRepository.setInternetStatus(InternetStatus.OFF)
         launchFragmentInHiltContainer<MovieFragment>()
         onView(ViewMatchers.withId(R.id.failing_view))
             .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
 
-        fakeRepository.setInternetStatus(InternetStatus.ON)
+        androidFakeRepository.setInternetStatus(InternetStatus.ON)
 
         onView(ViewMatchers.withId(R.id.btn_retry))
             .perform(click())

@@ -7,7 +7,9 @@ import com.movie_explorer.data.model.FavoriteMovie
 import com.movie_explorer.data.model.MovieApiResponse
 import com.movie_explorer.data.model.MovieDetail
 import com.movie_explorer.data.repository.FakeRepository
-import com.movie_explorer.data.repository.InternetStatus
+import com.movie_explorer.utils.InternetStatus
+import com.movie_explorer.utils.dummyGetMovieDetailApiResponse
+import com.movie_explorer.utils.dummyMovieApisResponse
 import com.movie_explorer.wrapper.RefreshType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -29,11 +31,6 @@ class MainViewModelTest {
     lateinit var mainViewModel: MainViewModel
 
 
-    private val dummyMovieApisResponse: MovieApiResponse =
-        fakeRepository.dummyMovieApisResponse
-
-    private val dummyGetMovieDetailApiResponse: MovieDetail =
-        fakeRepository.dummyGetMovieDetailApiResponse
 
     private val favoriteMovie = FavoriteMovie(1, "")
 

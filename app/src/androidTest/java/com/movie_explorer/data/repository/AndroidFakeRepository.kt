@@ -1,10 +1,10 @@
 package com.movie_explorer.data.repository
 
-import com.google.gson.Gson
 import com.movie_explorer.data.database.MovieAndFavoriteMovie
 import com.movie_explorer.data.model.*
-import com.movie_explorer.utils.dummySuccessApiResponse
-import com.movie_explorer.utils.dummySuccessGetMovieDetailApiResponse
+import com.movie_explorer.utils.InternetStatus
+import com.movie_explorer.utils.dummyGetMovieDetailApiResponse
+import com.movie_explorer.utils.dummyMovieApisResponse
 import com.movie_explorer.utils.interceptor.NoInternetException
 import com.movie_explorer.utils.networkBoundResource
 import com.movie_explorer.wrapEspressoIdlingResource
@@ -13,14 +13,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-enum class InternetStatus { ON, OFF }
 
-class FakeRepository  : RepositoryInterface {
-    val dummyMovieApisResponse: MovieApiResponse =
-        Gson().fromJson(dummySuccessApiResponse, MovieApiResponse::class.java)
-
-    val dummyGetMovieDetailApiResponse: MovieDetail =
-        Gson().fromJson(dummySuccessGetMovieDetailApiResponse, MovieDetail::class.java)
+class AndroidFakeRepository : RepositoryInterface {
 
     private val movieDataBase = MutableStateFlow<List<Movie>>(emptyList())
     private val favoriteMovieDataBase = MutableStateFlow<List<FavoriteMovie>>(emptyList())
